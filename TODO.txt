@@ -1,0 +1,34 @@
+PARAMETERS:
+
+    ADD A PERSON+DATE TO LOG:       people  add     'name', 'type of relationship'
+
+    LIST ALL PEOPLES' TIMESPAN:     people  check   [all]
+    CHECK PERSON TIMESPAN:          people  check   'name' 
+    CHECK TYPE TIMESPAN:            people  check   'type' 
+
+    REMOVE PERSON:                  people  forget  'name'
+    SUSPEND      :                  people  forget  'name'
+
+    SET TIMESPAN TO WARN:           people  days    'time'
+
+
+CSV:      
+    person name, last date added, date met, person type (optional)  
+
+TODO:
+
+Get user input
+  ^ Check for argc/argv correctness
+  ^ IF 1st argv is in keywords Add Check Forget Days
+      ^ Check for 2nd argv
+        ^ IF argc is 4 and argv[2] is 'add', then add 
+
+people add 'John Titor' 'Work'
+  ^ Open CSV write mode
+    ^ Add data by comma separations
+    ^ IF no 'type', type is null
+
+people check all
+
+Output lookup result
+  ^ Read from .csv file
