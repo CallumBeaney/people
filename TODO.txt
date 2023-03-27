@@ -32,3 +32,5 @@ people check all
 
 Output lookup result
   ^ Read from .csv file
+
+https://www.learn-c.org/en/Linked_lists

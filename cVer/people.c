@@ -3,18 +3,15 @@
 #include <string.h>
 #include <getopt.h>
 #include <ctype.h>
-// #include "helpers.c"
 #include <time.h>
 
-int _timeSpan;
 #define TIMEFILE "timespan" // default value in timespan is 30
-#define NAMEFILE "yellowpages" // where the user saves their friends' names
+#define NAMEFILE "yellowpages" // where the user saves peoples' names
 
 typedef struct node
 {
     char name[50];
     char date[12];
-    // char relationship[50];
     struct node *next;
 } person;
 
@@ -27,11 +24,11 @@ int getTimespan();
 int compareDates(int *today, int *comparisonDate);
 time_t timeof(int mon, int day, int yr);
 const int *getTodaysDate(int *date);
-void getLinkedList(void);
+person* getLinkedList(void);
 void readNamefileToLinkedList(person* head);
 void pushPersonToLinkedList(person * head, char* name, char* date);
 void freeList(person *head);
-
+char* getLowercase(char* name);
 
 
 // ___________________PROGRAM BEGINS___________________
@@ -39,9 +36,6 @@ void freeList(person *head);
 int main(int argc, char *argv[])
 {
     parseArguments(argc, argv);
-
-    getLinkedList();
-
     return 0;
 }
 
@@ -50,6 +44,7 @@ void parseArguments(int argc, char *argv[])
     // Check for non-time reliant arguments first
     if (argc == 3 && strcmp(argv[1], "forget") == 0)    /* REMOVE PERSON FROM LOG e.g. people  forget  'name' */
     {
+        // TODO: forget function
         printf("forgetting %s\n", argv[2]);
         exit(0);
     }
@@ -67,19 +62,20 @@ void parseArguments(int argc, char *argv[])
         }
         int userInput = atoi(rawInput);
         setTimespan(userInput);
-        printf("Interval to compare dates set to: %d days \n", userInput);
+        printf("\n\tInterval to compare dates set to: %d days \n\n", userInput);
         exit(0);
     }
 
     // User has invoked time-reliant operations e.g. ./people check 'John Titor'
-    int dateToday[3]; // [day, month, year]
+     // [day, month, year]
 
-    if ((argc == 3 || argc == 4) && strcmp(argv[1], "add") == 0) /* ADD PERSON: people add 'name' 'relationship' [optional] */
+    if ((argc == 3) && strcmp(argv[1], "add") == 0) /* ADD PERSON: people add 'name' 'relationship' [optional] */
     {
+        int dateToday[3];
         getTodaysDate(dateToday);
         char buffer[100];
 
-        FILE* file = fopen(NAMEFILE, "r"); // a for Append
+        FILE* file = fopen(NAMEFILE, "r");
         if (file == NULL) {
             fclose(file);
             file = fopen(NAMEFILE, "w");
@@ -95,42 +91,105 @@ void parseArguments(int argc, char *argv[])
             fclose(file);
         }
 
-        printf("Added %s to your People List\n", argv[2]);
+        printf("\n\tAdded %s to your People List\n\n", argv[2]);
         return;
     }
     else if (argc == 3 && strcmp(argv[1], "check") == 0 && strcmp(argv[2], "all") == 0) /* people check [all] */
     {
-        printf("checking all\n");
+        // printf("checking all\n");
+        person* directory = getLinkedList();
+        
+        // cycle through linked-list & compare lowercased names 
+        person* current = directory; // head node
+        while (current->next != NULL) 
+        {
+            int dateToday[3];
+            getTodaysDate(dateToday);
+
+            // parse dictionary date (e.g. 19/9/1999) into comparator
+            char* token = strtok(current->next->date, "/");
+            int comparator[3];                
+            int i = 0;
+
+            while (token != NULL) {
+                comparator[i] = atoi(token);
+                i++;
+                token = strtok(NULL, "/");
+            }
+
+            int daysSinceLastChecked = compareDates(dateToday, comparator);
+
+            printf("\n\t%s - last checked %i days ago", current->next->name, daysSinceLastChecked);
+
+            current = current->next; // move pointer onto next node. Without this your terminal goes into an endless loop and you feel much shame for being a bad programmer
+        }
+        printf("\n\n\tend\n\n");
+        free(directory);
+
     }
     else if (argc == 4 && strcmp(argv[1], "check") == 0 && strcmp(argv[2], "name") == 0) /* people check name [name] */
     {
-        // TODO: load "comparator" from/into people dictionary
+        char* lowercaseName;
+        lowercaseName = getLowercase(argv[3]);
 
-        printf("checking %s\n", argv[3]);
-
-        getTodaysDate(dateToday);
-        int comparator[3] = {15, 2, 2022}; // 413 days
-        printf("Today's Date: %i/%i/%i\n", dateToday[0], dateToday[1], dateToday[2]);
-        printf("Comparator Date: %i/%i/%i\n", comparator[0], comparator[1], comparator[2]);
-
-        int daysSinceLastChecked = compareDates(dateToday, comparator);
+        person* directory = getLinkedList();
         
-        // // Check if user wants to return 
-        // printf("It has been %i days since you last contacted %s.\nReset day counter to 0?\tY/N: ", daysSinceLastChecked, argv[3]);
-        // char yesNo;
-        // scanf(" %[^\n]%*c", &yesNo); // get a single char
-        // yesNo = toupper(yesNo);
-        // if (yesNo != 'Y') {
-        //     // TODO: change stored value
-        // }
+        // cycle through linked-list & compare lowercased names 
+        person* current = directory; // head node
+        while (current->next != NULL) 
+        {
+            char* lowercaseLinkedListName;
+            lowercaseLinkedListName = getLowercase(current->next->name);
+            
+            if(strcmp(lowercaseName, lowercaseLinkedListName) == 0)
+            {  
+                int dateToday[3];
+                getTodaysDate(dateToday);
 
-        getLinkedList();
+                // parse dictionary date (e.g. 19/9/1999) into comparator
+                char* token = strtok(current->next->date, "/");
+                int comparator[3];                
+                int i = 0;
+
+                while (token != NULL) {
+                    comparator[i] = atoi(token);
+                    i++;
+                    token = strtok(NULL, "/");
+                }
+
+                int daysSinceLastChecked = compareDates(dateToday, comparator);
+                
+                printf("\n\t%s - last checked %i days ago\n\n", argv[3], daysSinceLastChecked);
+
+                // Check if user wants to return 
+                printf("Reset number of days passed to 0?\nY/N: ");
+                char yesNo;
+                scanf(" %[^\n]%*c", &yesNo); // get a single char
+                yesNo = toupper(yesNo);
+                if (yesNo == 'Y') {
+                    // TODO: change stored value
+                    printf("Changing values...\n\n");
+                }
+                
+                free(lowercaseName);
+                free(lowercaseLinkedListName);
+                free(directory);
+                exit(0);
+            }
+            current = current->next;
+        }
+
+        // If it gets here, the name user is checking isn't in the list.
+        printf("\n\tERROR: \'%s\' not found in your People List.\n\tTo add them to your list, use: ./people add \'%s\'\n\n", argv[3], argv[3]);
+        free(lowercaseName);
+        free(directory);
+        exit(1);
 
     }
     else    
     {
         // User has put in a bad input
-        printf("\n┌─┐┌─┐┌─┐┌─┐┬  ┌─┐\n├─┘├┤ │ │├─┘│  ├┤ \n┴  └─┘└─┘┴  ┴─┘└─┘\n\nSyntax:\tpeople\tadd\t('forename surname' || name)\t'relationship' [optional]\n\tpeople\tcheck\tall\n\tpeople\tcheck\tname\t('forename surname' || name)\n\tpeople\tcheck\ttype\trelationship [e.g. work]\n\tpeople\tforget\t('forename surname' || name)\n\tpeople\tspan\tnumber [interval of days between checks]\n\nE.g.\tpeople\tadd\tAmy\twork\n\tpeople\tcheck\tJohn\n\tpeople\tspan\t69\n\nNote:\t\n\n");
+        printf("\n┌─┐┌─┐┌─┐┌─┐┬  ┌─┐\n├─┘├┤ │ │├─┘│  ├┤ \n┴  └─┘└─┘┴  ┴─┘└─┘\n\nSyntax:\tpeople\tadd\t('forename surname' || name)\n\tpeople\tcheck\tall\n\tpeople\tcheck\t('forename surname' || name)\n\tpeople\tforget\t('forename surname' || name)\n\tpeople\tspan\tnumber [interval of days between checks]\n\nE.g.\tpeople\tadd\tAmy\n\tpeople\tcheck\t'John Wick'\n\tpeople\tspan\t69\n\nNote:\t\n\n");
         exit(1);
     }
 }
@@ -225,9 +284,7 @@ time_t timeof(int day, int mon, int yr)
 }
 
 
-
-
-void getLinkedList(void)
+person* getLinkedList(void)
 {
     // Check whether NAMEFILE exists and close if not (e.g. user tries to check a name before adding a name)
     FILE *file = fopen(NAMEFILE, "r");
@@ -242,30 +299,18 @@ void getLinkedList(void)
     person* head = NULL;
     head = (person *) malloc(sizeof(person)); // allocate pointer to malloc'd space the size of a "person" struct
     if (head == NULL) {
-        exit(1); // The memory allocation operation failed
+        printf("ERROR: Memory allocation problem.\nThis is likely a system or memory management issue beyond the control of this program.\n");
+        exit(1); // The memory allocation operation failed 
     }
-    head->next = NULL; // if uninitialized, while loop in readPages() can sometimes point to a random memory location & segfault
-
-    readNamefileToLinkedList(head);
-    // head -> name = 
-    // head -> date =
-    // head -> next = NULL;
-    
-}
-
-
-
-void readNamefileToLinkedList(person* head) 
-{
+    head->next = NULL; // if uninitialized, while loop in readPages() can sometimes point to a random memory location & segfault and that would be embarrassing
+ 
     person* current = head;
-
     while (current != NULL) {
         printf("%s", current->name);
         current = current->next;
     }
 
-
-    FILE *file = fopen(NAMEFILE, "r");
+    file = fopen(NAMEFILE, "r");
     if (file == NULL) {
         printf("Error: failed to open file\n");
         fclose(file);
@@ -285,10 +330,12 @@ void readNamefileToLinkedList(person* head)
         }
         pushPersonToLinkedList(head, name, date);
     }
-
     fclose(file);
     // freeList(head);
+    return head;
 }
+
+
 
 void pushPersonToLinkedList(person* head, char* name, char* date) 
 {             
@@ -320,4 +367,18 @@ void freeList(person * head)
        free(tmp);
     }
 
+}
+
+char* getLowercase(char* userInput)
+{
+    // allocate memory space the size of the user ARGV
+    char* result = malloc(strlen(userInput) + 1);
+    for (int i = 0; userInput[i] != '\0'; i++) 
+    {
+        result[i] = tolower(userInput[i]);
+    }
+    // printf("name: %s|\n", userInput);
+    // printf("result: %s|\n", result);
+        
+    return result;
 }
