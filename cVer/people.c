@@ -16,19 +16,19 @@ typedef struct node
 } person;
 
 // Function Definitions
-void checkAll();
-void checkName();
 void parseArguments(int argc, char *argv[]);
 void setTimespan(int input);
 int getTimespan();
 int compareDates(int *today, int *comparisonDate);
 time_t timeof(int mon, int day, int yr);
 const int *getTodaysDate(int *date);
-person* getLinkedList(void);
+person* getLinkedListFromNAMEFILE(void);
 void readNamefileToLinkedList(person* head);
 void pushPersonToLinkedList(person * head, char* name, char* date);
 void freeList(person *head);
 char* getLowercase(char* name);
+char* concatArgumentVector(int argc, char*argv[]);
+void rewriteDirectory(person* head);
 
 
 // ___________________PROGRAM BEGINS___________________
@@ -41,14 +41,79 @@ int main(int argc, char *argv[])
 
 void parseArguments(int argc, char *argv[])
 {
-    // Check for non-time reliant arguments first
-    if (argc == 3 && strcmp(argv[1], "forget") == 0)    /* REMOVE PERSON FROM LOG e.g. people  forget  'name' */
+    /*____Check for NON-time reliant arguments first____*/
+
+    /* REMOVE PERSON FROM DIRECTORY: people forget name name */
+    if (argc >= 3 && strcmp(argv[1], "forget") == 0)    
     {
-        // TODO: forget function
-        printf("forgetting %s\n", argv[2]);
+        char* userInputtedName;
+        char* lowercaseName;
+        userInputtedName = concatArgumentVector(argc, argv);
+        lowercaseName = getLowercase(userInputtedName);
+
+        // Check whether NAMEFILE exists -- if exists, cycle a linkedlist built from it and check whether Name To Delete exists.
+        person* directory = getLinkedListFromNAMEFILE();
+        FILE* file = fopen(NAMEFILE, "r");
+        if (file != NULL)
+        {
+            person* current = directory; //head node for loop-checking
+            int found = 0;
+            while(current->next != NULL) 
+            {
+                char* lowercaseLinkedListName;
+                lowercaseLinkedListName = getLowercase(current->next->name);
+                if(strcmp(lowercaseName, lowercaseLinkedListName) == 0)
+                {   
+                    // name is in the directory
+                    found = 1;
+                    free(lowercaseLinkedListName);
+                    break;
+                    
+                }
+                current = current->next; // move pointer onto next node. Without this your terminal goes into an endless loop and you stay up to 1AM repeatedly failing to notice this obvious error
+            }
+            if (found != 1) {
+                printf("\n\tERROR: this name was not found in your user list. Use [./people check all] to check your user list.\n\n");
+                free(userInputtedName);
+                free(lowercaseName);
+                freeList(directory);
+                fclose(file);
+                exit(1);
+            }
+        }
+        else if (file == NULL) {
+            // TODO: error handling
+            printf("\n\n\tERROR: Your People List file does not exist. Use [./people add forename surname] to create and add to your People List.\n\n");
+            free(userInputtedName);
+            free(lowercaseName);
+            fclose(file);
+            exit(1);
+        }
+        fclose(file);
+
+        // if the program gets here, the user's inputted an existing name and the People List NAMEFILE exists.
+        // Rewrite the directory to the NAMEFILE by excluding the node with the unwanted matching ->name
+        file = fopen(NAMEFILE,"w");
+        person* current = directory;
+        while (current->next != NULL)
+        {
+            char* lowercaseLinkedListName;
+            lowercaseLinkedListName = getLowercase(current->next->name);
+            if (strcmp(lowercaseName, lowercaseLinkedListName) != 0)
+            {
+                char buffer[100];
+                snprintf(buffer, sizeof(buffer), "%s,%s\n", current->next->name, current->next->date);
+                fprintf(file, "%s", buffer);
+            }
+
+            current = current->next;
+        }
+        fclose(file);
+        freeList(directory);
         exit(0);
     }
-    if (argc == 3 && strcmp(argv[1], "span") == 0) /* SET TIMESPAN e.g. people span [number] */
+    /* SET TIMESPAN: people days [number] */
+    if (argc == 3 && strcmp(argv[1], "days") == 0) 
     {
         char *rawInput = argv[2];
         for (int i = 0; i < strlen(rawInput); i++)
@@ -56,7 +121,7 @@ void parseArguments(int argc, char *argv[])
             if (!isdigit(rawInput[i]))
             {
                 printf("%s is not a valid number\n", rawInput);
-                printf("Usage: e.g.\tpeople\tspan\t69 [set timespan to 69 days]");
+                printf("Usage: e.g.\tpeople\tdays\t69 [set timespan to 69 days]");
                 exit(1);
             }
         }
@@ -66,40 +131,60 @@ void parseArguments(int argc, char *argv[])
         exit(0);
     }
 
-    // User has invoked time-reliant operations e.g. ./people check 'John Titor'
-     // [day, month, year]
-
-    if ((argc == 3) && strcmp(argv[1], "add") == 0) /* ADD PERSON: people add 'name' 'relationship' [optional] */
+    /*____User has invoked time-reliant operations____*/
+     
+    // ADD PERSON: people add forename surname
+    if ((argc >= 3) && strcmp(argv[1], "add") == 0) 
     {
+        char* userInputtedName;
+        userInputtedName = concatArgumentVector(argc, argv);
+        char* lowercaseName;
+        lowercaseName = getLowercase(userInputtedName);
+
+        // Check whether NAMEFILE exists, if it does cycle through linked-list and check whether the Name To Add already exists
+        FILE* file = fopen(NAMEFILE, "r");
+        if (file != NULL)
+        {
+            person* directory = getLinkedListFromNAMEFILE();
+            person* current = directory; // head node
+            while (current->next != NULL) 
+            {
+                char* lowercaseLinkedListName;
+                lowercaseLinkedListName = getLowercase(current->next->name);
+                if(strcmp(lowercaseName, lowercaseLinkedListName) == 0)
+                {          
+                    printf("\n\t%s is already in your People List!\n\tTo check: [ ./people check %s ]\n\n", userInputtedName, userInputtedName);
+                    free(lowercaseLinkedListName);
+                    free(userInputtedName);
+                    freeList(directory);
+                    fclose(file);
+                    exit(1);
+                }
+                current = current->next;
+            }
+        }
+        fclose(file); // TODO: what if no directory? make clear!
+
+        // If the program gets to here, then the user's inputted a new name. 
         int dateToday[3];
         getTodaysDate(dateToday);
         char buffer[100];
 
-        FILE* file = fopen(NAMEFILE, "r");
-        if (file == NULL) {
-            fclose(file);
-            file = fopen(NAMEFILE, "w");
-            snprintf(buffer, sizeof(buffer), "%s,%i/%i/%i\n", argv[2], dateToday[0], dateToday[1], dateToday[2]);
-            fprintf(file, "%s", buffer);
-            fclose(file);
-        }
-        else {
-            fclose(file);
-            file = fopen(NAMEFILE, "a");
-            snprintf(buffer, sizeof(buffer), "%s,%i/%i/%i\n", argv[2], dateToday[0], dateToday[1], dateToday[2]);
-            fprintf(file, "%s", buffer);
-            fclose(file);
-        }
+        file = fopen(NAMEFILE, "a");
+        snprintf(buffer, sizeof(buffer), "%s,%i/%i/%i\n", userInputtedName, dateToday[0], dateToday[1], dateToday[2]);
+        fprintf(file, "%s", buffer);
+        fclose(file);
 
-        printf("\n\tAdded %s to your People List\n\n", argv[2]);
+        printf("\n\tAdded %s to your People List\n\n", userInputtedName);
+        free(userInputtedName);
+        free(lowercaseName);
         return;
     }
-    else if (argc == 3 && strcmp(argv[1], "check") == 0 && strcmp(argv[2], "all") == 0) /* people check [all] */
+    /* CHECK ALL PEOPLE IN DIRECTORY: people check [all] */
+    else if (argc == 3 && strcmp(argv[1], "check") == 0 && strcmp(argv[2], "all") == 0) 
     {
-        // printf("checking all\n");
-        person* directory = getLinkedList();
-        
         // cycle through linked-list & compare lowercased names 
+        person* directory = getLinkedListFromNAMEFILE();        
         person* current = directory; // head node
         while (current->next != NULL) 
         {
@@ -118,23 +203,36 @@ void parseArguments(int argc, char *argv[])
             }
 
             int daysSinceLastChecked = compareDates(dateToday, comparator);
+            int elapsedCheck = getTimespan();
 
-            printf("\n\t%s - last checked %i days ago", current->next->name, daysSinceLastChecked);
+            printf("\n\t%s\t- last checked\t%i\tdays ago", current->next->name, daysSinceLastChecked);
 
-            current = current->next; // move pointer onto next node. Without this your terminal goes into an endless loop and you feel much shame for being a bad programmer
+            if (daysSinceLastChecked > elapsedCheck) {
+                printf("  ! IMPORTANT");
+            }
+    
+            current = current->next; 
         }
-        printf("\n\n\tend\n\n");
-        free(directory);
-
+        printf("\n\n");
+        freeList(directory);
+        exit(0);
     }
-    else if (argc == 4 && strcmp(argv[1], "check") == 0 && strcmp(argv[2], "name") == 0) /* people check name [name] */
-    {
-        char* lowercaseName;
-        lowercaseName = getLowercase(argv[3]);
+    /* CHECK A SPECIFIC PERSON: people check forename surname */
+    else if (strcmp(argv[1], "check") == 0 && argc >= 3) 
+    {   
+        // Ensure they aren't fudging a [./people check all]
+        if (strcmp(argv[2], "all") == 0) {
+            printf("\n\tERROR: To check for all people in the list, use: [./people check all]\n\n");
+            exit(1);
+        }
 
-        person* directory = getLinkedList();
+        char* userInputtedName;
+        char* lowercaseName;
+        userInputtedName = concatArgumentVector(argc, argv);
+        lowercaseName = getLowercase(userInputtedName);
         
         // cycle through linked-list & compare lowercased names 
+        person* directory = getLinkedListFromNAMEFILE();
         person* current = directory; // head node
         while (current->next != NULL) 
         {
@@ -158,38 +256,43 @@ void parseArguments(int argc, char *argv[])
                 }
 
                 int daysSinceLastChecked = compareDates(dateToday, comparator);
-                
-                printf("\n\t%s - last checked %i days ago\n\n", argv[3], daysSinceLastChecked);
+    
+                printf("\n\t%s - last checked %i days ago\n\n", userInputtedName, daysSinceLastChecked);
 
-                // Check if user wants to return 
+                // Check if user wants to reset date 
                 printf("Reset number of days passed to 0?\nY/N: ");
                 char yesNo;
                 scanf(" %[^\n]%*c", &yesNo); // get a single char
                 yesNo = toupper(yesNo);
                 if (yesNo == 'Y') {
-                    // TODO: change stored value
-                    printf("Changing values...\n\n");
+                    // Reset date in linked list
+                    snprintf(current->next->date, sizeof(current->next->date), "%i/%i/%i", dateToday[0], dateToday[1], dateToday[2]);
+
+                    rewriteDirectory(directory); // write linked list to NAMEFILE
+                    printf("Changed lookup date for %s to today's date.\n\n", userInputtedName);    
                 }
                 
                 free(lowercaseName);
+                free(userInputtedName);
                 free(lowercaseLinkedListName);
-                free(directory);
+                freeList(directory);
                 exit(0);
             }
             current = current->next;
         }
 
-        // If it gets here, the name user is checking isn't in the list.
-        printf("\n\tERROR: \'%s\' not found in your People List.\n\tTo add them to your list, use: ./people add \'%s\'\n\n", argv[3], argv[3]);
+        // If program gets here, the name user is checking isn't in the list.
+        printf("\n\tERROR: \'%s\' not found in your People List.\n\tTo add them to your list, use: ./people add \'%s\'\n\n", userInputtedName, userInputtedName);
         free(lowercaseName);
-        free(directory);
+        free(userInputtedName);
+        freeList(directory);
         exit(1);
 
     }
     else    
     {
         // User has put in a bad input
-        printf("\n┌─┐┌─┐┌─┐┌─┐┬  ┌─┐\n├─┘├┤ │ │├─┘│  ├┤ \n┴  └─┘└─┘┴  ┴─┘└─┘\n\nSyntax:\tpeople\tadd\t('forename surname' || name)\n\tpeople\tcheck\tall\n\tpeople\tcheck\t('forename surname' || name)\n\tpeople\tforget\t('forename surname' || name)\n\tpeople\tspan\tnumber [interval of days between checks]\n\nE.g.\tpeople\tadd\tAmy\n\tpeople\tcheck\t'John Wick'\n\tpeople\tspan\t69\n\nNote:\t\n\n");
+        printf("\n┌─┐┌─┐┌─┐┌─┐┬  ┌─┐\n├─┘├┤ │ │├─┘│  ├┤ \n┴  └─┘└─┘┴  ┴─┘└─┘\n\nSyntax:\tpeople\tadd\tforename surname\n\tpeople\tcheck\tall\n\tpeople\tcheck\tforename surname\n\tpeople\tforget\tforename surname\n\tpeople\tdays\tnumber [interval of days between checks]\n\nE.g.\tpeople\tadd\tAmy\n\tpeople\tcheck\tJohn Wick\n\tpeople\tdays\t96\n\n");
         exit(1);
     }
 }
@@ -215,7 +318,7 @@ int getTimespan(void)
     if (file == NULL)
     {
         // File does not exist, initialize variable to default value
-        printf("WARNING: the file 'timespan' appears to be missing from the data folder. Creating 'timespan' data file with default interval of 30 days. To change, use: 'people span [number]\n");
+        printf("\n\tWARNING: the file 'timespan' appears to be missing from the data folder.\n\tCreating 'timespan' data file with default interval of 30 days. To change, use: 'people time [number]\n");
         fclose(file);
         timespanData = 30;
         file = fopen(TIMEFILE, "w");
@@ -234,7 +337,7 @@ int getTimespan(void)
 }
 
 
-const int *getTodaysDate(int *date)
+const int* getTodaysDate(int *date)
 {
     time_t t = time(NULL);               // get current time data
     struct tm *timeData = localtime(&t); // parse into fields using time.h lib fn
@@ -284,12 +387,12 @@ time_t timeof(int day, int mon, int yr)
 }
 
 
-person* getLinkedList(void)
+person* getLinkedListFromNAMEFILE(void)
 {
     // Check whether NAMEFILE exists and close if not (e.g. user tries to check a name before adding a name)
     FILE *file = fopen(NAMEFILE, "r");
     if (file == NULL) {
-        printf("You don't have anyone saved to your People List!\nAdd someone using [./people add 'name name'] and try again!\n");
+        printf("\n\tYou don't have anyone saved to your People List!\n\tAdd someone using [./people add forename surname] and try again!\n\n");
         fclose(file);
         exit(1);
     }
@@ -356,7 +459,7 @@ void pushPersonToLinkedList(person* head, char* name, char* date)
     // printf("%s\n", current->next->date);
 }
 
-void freeList(person * head)
+void freeList(person * head) //TODO: implement
 {
    struct node* tmp;
 
@@ -377,8 +480,44 @@ char* getLowercase(char* userInput)
     {
         result[i] = tolower(userInput[i]);
     }
-    // printf("name: %s|\n", userInput);
-    // printf("result: %s|\n", result);
-        
+    // printf("TOLOWER   name: %s|\n", userInput);
+    // printf("TOLOWER result: %s|\n", result);
     return result;
+}
+
+char* concatArgumentVector(int argc, char* argv[])
+{
+    char* buffer = (char *) malloc(100);
+    strcpy(buffer, argv[2]); 
+    // 1. if user writes just one name [./people check BatMan] or writes [./people check 'john wick'], strcpy() handles it. 
+    // 2. strcpy initialises the above array and appends \0 at the end.
+    if (argc > 3) 
+    {
+        int i = 3;
+        while (argv[i] != NULL)
+        {
+            strcat(buffer, " ");
+            strcat(buffer, argv[i]);
+            i++;
+        }
+    }
+    return buffer;
+}
+
+void rewriteDirectory(person* head) 
+{
+    // here you are basically rebuilding the yellowpages directory file from a linked list you have made an edit to e.g. updating the date of a Person
+    FILE* file = fopen(NAMEFILE, "w");
+
+    person* current = head;
+    while (current->next != NULL)
+    {
+        char buffer[100];
+        snprintf(buffer, sizeof(buffer), "%s,%s\n", current->next->name, current->next->date);
+        fprintf(file, "%s", buffer);
+
+        current = current->next;
+    }
+    fclose(file);
+    
 }
