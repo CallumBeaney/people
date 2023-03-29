@@ -1,3 +1,6 @@
+// TODO: in-order insertion in the linked list
+// TODO: \n in longer names in checkall function
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,33 +19,27 @@ typedef struct node
 } person;
 
 // Function Definitions
-void parseArguments(int argc, char *argv[]);
+char* concatArgumentVector(int argc, char*argv[]);
+char* getLowercase(char* name);
+void rewriteDirectory(person* head);
+
 void setTimespan(int input);
 int getTimespan();
+
+const int *getTodaysDate(int *date);
 int compareDates(int *today, int *comparisonDate);
 time_t timeof(int mon, int day, int yr);
-const int *getTodaysDate(int *date);
+
 person* getLinkedListFromNAMEFILE(void);
 void readNamefileToLinkedList(person* head);
 void pushPersonToLinkedList(person * head, char* name, char* date);
 void freeList(person *head);
-char* getLowercase(char* name);
-char* concatArgumentVector(int argc, char*argv[]);
-void rewriteDirectory(person* head);
 
 
 // ___________________PROGRAM BEGINS___________________
 
 int main(int argc, char *argv[])
 {
-    parseArguments(argc, argv);
-    return 0;
-}
-
-void parseArguments(int argc, char *argv[])
-{
-    /*____Check for NON-time reliant arguments first____*/
-
     /* REMOVE PERSON FROM DIRECTORY: people forget name name */
     if (argc >= 3 && strcmp(argv[1], "forget") == 0)    
     {
@@ -78,16 +75,15 @@ void parseArguments(int argc, char *argv[])
                 free(lowercaseName);
                 freeList(directory);
                 fclose(file);
-                exit(1);
+                return 1;
             }
         }
         else if (file == NULL) {
-            // TODO: error handling
             printf("\n\n\tERROR: Your People List file does not exist. Use [./people add forename surname] to create and add to your People List.\n\n");
             free(userInputtedName);
             free(lowercaseName);
             fclose(file);
-            exit(1);
+            return 1;
         }
         fclose(file);
 
@@ -110,7 +106,8 @@ void parseArguments(int argc, char *argv[])
         }
         fclose(file);
         freeList(directory);
-        exit(0);
+        printf("\n\t%s has been removed from your People List\n\n", userInputtedName);
+        return 0;
     }
     /* SET TIMESPAN: people days [number] */
     if (argc == 3 && strcmp(argv[1], "days") == 0) 
@@ -120,21 +117,17 @@ void parseArguments(int argc, char *argv[])
         {
             if (!isdigit(rawInput[i]))
             {
-                printf("%s is not a valid number\n", rawInput);
-                printf("Usage: e.g.\tpeople\tdays\t69 [set timespan to 69 days]");
+                printf("\n\tERROR: %s is not a valid number", rawInput);
+                printf("\n\tUsage: e.g.\tpeople\tdays\t69 [set timespan to 69 days]\n\n");
                 exit(1);
             }
         }
         int userInput = atoi(rawInput);
         setTimespan(userInput);
         printf("\n\tInterval to compare dates set to: %d days \n\n", userInput);
-        exit(0);
+        return 0;
     }
-
-    /*____User has invoked time-reliant operations____*/
-     
-    // ADD PERSON: people add forename surname
-    if ((argc >= 3) && strcmp(argv[1], "add") == 0) 
+    else if ((argc >= 3) && strcmp(argv[1], "add") == 0) 
     {
         char* userInputtedName;
         userInputtedName = concatArgumentVector(argc, argv);
@@ -158,14 +151,15 @@ void parseArguments(int argc, char *argv[])
                     free(userInputtedName);
                     freeList(directory);
                     fclose(file);
-                    exit(1);
+                    return 1;
                 }
                 current = current->next;
             }
         }
-        fclose(file); // TODO: what if no directory? make clear!
+        fclose(file);
 
         // If the program gets to here, then the user's inputted a new name. 
+        // If the file == NULL, the fopen below is going to initialise that namefile.
         int dateToday[3];
         getTodaysDate(dateToday);
         char buffer[100];
@@ -178,7 +172,7 @@ void parseArguments(int argc, char *argv[])
         printf("\n\tAdded %s to your People List\n\n", userInputtedName);
         free(userInputtedName);
         free(lowercaseName);
-        return;
+        return 0;
     }
     /* CHECK ALL PEOPLE IN DIRECTORY: people check [all] */
     else if (argc == 3 && strcmp(argv[1], "check") == 0 && strcmp(argv[2], "all") == 0) 
@@ -215,7 +209,7 @@ void parseArguments(int argc, char *argv[])
         }
         printf("\n\n");
         freeList(directory);
-        exit(0);
+        return 0;
     }
     /* CHECK A SPECIFIC PERSON: people check forename surname */
     else if (strcmp(argv[1], "check") == 0 && argc >= 3) 
@@ -223,7 +217,7 @@ void parseArguments(int argc, char *argv[])
         // Ensure they aren't fudging a [./people check all]
         if (strcmp(argv[2], "all") == 0) {
             printf("\n\tERROR: To check for all people in the list, use: [./people check all]\n\n");
-            exit(1);
+            return 1;
         }
 
         char* userInputtedName;
@@ -257,7 +251,7 @@ void parseArguments(int argc, char *argv[])
 
                 int daysSinceLastChecked = compareDates(dateToday, comparator);
     
-                printf("\n\t%s - last checked %i days ago\n\n", userInputtedName, daysSinceLastChecked);
+                printf("\n\t%s - last checked %i days ago\n\n", current->next->name, daysSinceLastChecked);
 
                 // Check if user wants to reset date 
                 printf("Reset number of days passed to 0?\nY/N: ");
@@ -276,7 +270,7 @@ void parseArguments(int argc, char *argv[])
                 free(userInputtedName);
                 free(lowercaseLinkedListName);
                 freeList(directory);
-                exit(0);
+                return 0;
             }
             current = current->next;
         }
@@ -286,7 +280,7 @@ void parseArguments(int argc, char *argv[])
         free(lowercaseName);
         free(userInputtedName);
         freeList(directory);
-        exit(1);
+        return 1;
 
     }
     else    
@@ -294,8 +288,12 @@ void parseArguments(int argc, char *argv[])
         // User has put in a bad input
         printf("\n┌─┐┌─┐┌─┐┌─┐┬  ┌─┐\n├─┘├┤ │ │├─┘│  ├┤ \n┴  └─┘└─┘┴  ┴─┘└─┘\n\nSyntax:\tpeople\tadd\tforename surname\n\tpeople\tcheck\tall\n\tpeople\tcheck\tforename surname\n\tpeople\tforget\tforename surname\n\tpeople\tdays\tnumber [interval of days between checks]\n\nE.g.\tpeople\tadd\tAmy\n\tpeople\tcheck\tJohn Wick\n\tpeople\tdays\t96\n\n");
         exit(1);
-    }
+    }    
+
+    // the program should never get here
+    return 1;
 }
+
 
 void setTimespan(int input)
 {
@@ -318,7 +316,7 @@ int getTimespan(void)
     if (file == NULL)
     {
         // File does not exist, initialize variable to default value
-        printf("\n\tWARNING: the file 'timespan' appears to be missing from the data folder.\n\tCreating 'timespan' data file with default interval of 30 days. To change, use: 'people time [number]\n");
+        printf("\n\tThe file 'timespan' appears to be missing from the data folder.\n\tCreating 'timespan' data file with default interval of 30 days.\n\tTo change, use: 'people time [number]\n");
         fclose(file);
         timespanData = 30;
         file = fopen(TIMEFILE, "w");
@@ -459,7 +457,7 @@ void pushPersonToLinkedList(person* head, char* name, char* date)
     // printf("%s\n", current->next->date);
 }
 
-void freeList(person * head) //TODO: implement
+void freeList(person * head)
 {
    struct node* tmp;
 
@@ -519,5 +517,4 @@ void rewriteDirectory(person* head)
         current = current->next;
     }
     fclose(file);
-    
 }
