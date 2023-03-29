@@ -1,10 +1,7 @@
 # people
 ## what is?
 This is a CLI tool for tracking the number of days since you have made contact with people.  
-Why a CLI? It is discreet and the vast majority of people don't even know what a terminal is.  
-Why make this? Once a work of friend network reaches a certain size it can be easy to forget to maintain less intimate relationships when work is intense.  
-  
-Below is a walkthrough and instructions on making this program accessible system-wide with an alias for smoother use.
+Below is a walkthrough and instructions on making this program accessible system-wide with an alias for smoother use.  
 
 ## usage
 ```
