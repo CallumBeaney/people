@@ -71,8 +71,8 @@ nano ~/.zshrc
 ```  
 2. In the file, add the following lines with the path to the executable 'people' replacing the paths below. Do not remove `:$PATH` from within the quotes.  
 ```
-export PATH="/path/to/program/people:$PATH"
-alias people='/path/to/program/people'
+export PATH="/Users/username/Applications/program_folder/people:$PATH"
+alias people='/Users/username/Applications/program_folder/people'
 ```  
 3. Then exit and save by `^X` and submitting `Y` to confirm save on exit, and then reload your profile file by running:
 ```
@@ -85,8 +85,8 @@ source ~/.zshrc
 ```  
 5. ...and with the given path, it might look something like this:
 ``` 
-#define TIMEFILE "/Users/userName/Applications/people/timespan"
-#define NAMEFILE "/Users/userName/Applications/people/yellowpages"
+#define TIMEFILE "/Users/username/Applications/people/timespan"
+#define NAMEFILE "/Users/username/Applications/people/yellowpages"
 ```  
 If you want to make the files invisible in the main folder system, you can prepend with a dot on macOS e.g. `~/people/.timespan`.   
   
