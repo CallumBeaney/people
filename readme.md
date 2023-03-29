@@ -88,7 +88,8 @@ source ~/.zshrc
 #define TIMEFILE "/Users/userName/Applications/people/timespan"
 #define NAMEFILE "/Users/userName/Applications/people/yellowpages"
 ```  
-If you want to make the files invisible in the main folder system, you can prepend with a dot on macOS e.g. `~/people/.timespan`.
+If you want to make the files invisible in the main folder system, you can prepend with a dot on macOS e.g. `~/people/.timespan`.   
+  
 6. Make the program with e.g. GNU make utility: 
 ```
 make people
