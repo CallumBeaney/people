@@ -1,8 +1,13 @@
 # people
-## what is?
+
 This is a CLI tool for tracking the number of days since you have made contact with people.  
 Why a CLI? It is discreet and the vast majority of people don't even know what a terminal is.  
-Below is a walkthrough and instructions on making this program accessible system-wide with an alias for smoother use.  
+
+[usage](#usage)  
+[installation](#installation)  
+[walkthrough](#walkthrough)  
+[making accessible system-wide with an alias](#making-this-program-accessible-system-wide-with-an-alias)  
+
 
 ## usage
 ```
@@ -70,7 +75,7 @@ Again, you will be prompted with an offer to reset the date associated with thes
 ./people forget all
 ```
 
-### making this program accessible system-wide with an alias
+## making this program accessible system-wide with an alias
 For the sake of being able to quickly check without moving to the containing folder and executing from there like a standard C executable, here is how you can create an alias and add it to your PATH. You can find instructions on how to do this online for your specific operating system. If using a macOS, the process will look like this:  
 
 1. Open a terminal and type:
