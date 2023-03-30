@@ -2,9 +2,7 @@
 ## what is?
 This is a CLI tool for tracking the number of days since you have made contact with people.  
 Why a CLI? It is discreet and the vast majority of people don't even know what a terminal is.  
-Why make this? Once a work of friend network reaches a certain size it can be easy to forget to maintain less intimate relationships when work is intense.  
-  
-Below is a walkthrough and instructions on making this program accessible system-wide with an alias for smoother use.
+Below is a walkthrough and instructions on making this program accessible system-wide with an alias for smoother use.  
 
 ## usage
 ```
@@ -15,6 +13,13 @@ Below is a walkthrough and instructions on making this program accessible system
 ./people  forget  all
 ./people  days    number [see Walkthrough below]
 ```
+
+## installation
+Download this repo using the green `<> Code` button above, or via the terminal:  
+```
+git clone https://github.com/CallumBeaney/people
+```
+Unless you wish to make this program accessible system-wide using an alias, you only need the executable named `people`.
 
 ## walkthrough
 1. First, add a user. If you don't have a `yellowpages` file (you won't initially), one will be created.   
@@ -29,7 +34,7 @@ Below is a walkthrough and instructions on making this program accessible system
 ./people check fred durst
     fred durst - last checked 0 days ago
 ```
-3. You will be prompted with an offer to reset the date associated with this name.  Let's imagine that, 2 months earlier, 'Joanna Newsom' was added to this list.  
+3. You will be prompted with an offer to reset the date associated with this name.  Let's imagine that, 2 months earlier, 'Joanna Newsom' was added to this list, and you want to see the full list. You won't have a `timespan` file initially; one will be made automatically. 
 
 ```       
 ./people check all
@@ -37,9 +42,9 @@ Joanna Newsom   - last checked  59      days ago  ! IMPORTANT
 Fred Durst      - last checked  0       days ago
 David Hume      - last checked  0       days ago
 ```
-4. Again, you will be prompted with an offer to reset the date associated with these names.  
+Again, you will be prompted with an offer to reset the date associated with these names.  
 
-That `! IMPORTANT` is triggered when your checking interval stored in the file `timespan` is smaller than the elapsed days since you last checked a person. To change that interval, run the following command with your preferred number of days before you're given a warning:
+4.  That `! IMPORTANT` is triggered when your checking interval stored in the file `timespan` is smaller than the elapsed days since you last checked a person. To change that interval, run the following command with your preferred number of days before you're given a warning:
 
 ```
 ./people days 100                 
@@ -81,20 +86,22 @@ alias people='/path/to/program/people'
 ```
 source ~/.zshrc
 ```  
-4. By now, you can call your program from anywhere with just e.g. 'people check all', but it will need to be configured to only read and write your People List data from a specific folder. So, now go to the folder containing this program, open the .c file `people.c`, and at lines 8 and 9, change the inside of the quotes to the path of that folder. It should look initially look something like this:
+By now, you can call your program from anywhere with just e.g. 'people check all', but it will need to be configured to only read and write your People List data from a specific folder.  
+  
+4. Move to the `/src/` directory containing the source files, open `constants.h`, and at lines 4 and 5, change the inside of the quotes to the path of that folder. It should look initially look something like this:
 ``` 
 #define TIMEFILE "timespan"
 #define NAMEFILE "yellowpages"
 ```  
 5. ...and with the given path, it might look something like this:
 ``` 
-#define TIMEFILE "/Users/userName/Applications/people/timespan"
-#define NAMEFILE "/Users/userName/Applications/people/yellowpages"
+#define TIMEFILE "/Users/userName/Applications/people/src/timespan"
+#define NAMEFILE "/Users/userName/Applications/people/src/yellowpages"
 ```  
 If you want to make the files invisible in the main folder system, you can prepend with a dot on macOS e.g. `~/people/.timespan`.
-6. Make the program with e.g. GNU make utility: 
+6. Make the program with e.g. GCC make utility from the `/src/` directory: 
 ```
-make people
+gcc -o people main.c helpers.c
 ```  
 7. You can now run People like this:
 
