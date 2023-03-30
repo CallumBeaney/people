@@ -79,8 +79,8 @@ nano ~/.zshrc
 ```  
 2. In the file, add the following lines with the path to the executable 'people' replacing the paths below. Do not remove `:$PATH` from within the quotes.  
 ```
-export PATH="/path/to/program/people:$PATH"
-alias people='/path/to/program/people'
+export PATH="/Users/username/Applications/program_folder/people:$PATH"
+alias people='/Users/username/Applications/program_folder/people'
 ```  
 3. Then exit and save by `^X` and submitting `Y` to confirm save on exit, and then reload your profile file by running:
 ```
