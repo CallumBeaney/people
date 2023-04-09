@@ -45,9 +45,10 @@ Case isn't important; spelling is.
 
 ```       
 ./people check all
-Joanna Newsom   - last checked  59      days ago  ! IMPORTANT
-Fred Durst      - last checked  0       days ago
+
 David Hume      - last checked  0       days ago
+Fred Durst      - last checked  0       days ago
+Joanna Newsom   - last checked  59      days ago  ! IMPORTANT
 ```
 Again, you will be prompted with an offer to reset the date associated with these names.  
 
@@ -56,12 +57,14 @@ Again, you will be prompted with an offer to reset the date associated with thes
 ```
 ./people days 100                 
     Interval to compare dates set to: 100 days 
-./people check all        
-    Joanna Newsom   - last checked  59      days ago
-    Fred Durst      - last checked  0       days ago
-    David Hume      - last checked  0       days ago
-```
 
+./people check all        
+    David Hume      - last checked  0       days ago
+    Fred Durst      - last checked  0       days ago
+    Joanna Newsom   - last checked  59      days ago
+```
+The program will auto-sort your name list alphabetically when you do a checkall.  
+  
 5. To stop checking in on a person:
 ```
 ./people forget fred durst
