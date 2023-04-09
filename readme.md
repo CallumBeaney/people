@@ -2,7 +2,6 @@
 
 **what is?**  ー This is a CLI tool for tracking the number of days since you have made contact with people.  
 **why a CLI?**  ー lightweight & discreet (99% of people don't even know what a terminal is)    
-**why written in C?**  ー [why not?](https://www.youtube.com/watch?v=AVfAoNHjTHQ)
   
 [usage](#usage)  
 [installation](#installation)  
