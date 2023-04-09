@@ -21,6 +21,7 @@ person* getLinkedListFromNAMEFILE(void);
 void pushPersonToLinkedList(person * head, char* name, char* date);
 void freeList(person *head);
 void rewriteDirectory(person* head);
+void sortLinkedListByName(person* head);
 
 
 #endif

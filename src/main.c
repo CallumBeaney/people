@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 /* 
     DELETE DIRECTORY: people forget all 
 */    
-    if (argc == 3 && strcmp(argv[1], "forget") == 0 && strcmp(argv[2], "all") == 0)
+    if (argc == 3 && strcmp(argv[1], "forget") == 0 && strcmp(argv[2], "all") == 0) 
     {
         int purge = remove(NAMEFILE);
         if(purge == 0) {
@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 /* 
     REMOVE PERSON FROM DIRECTORY: people forget name name 
 */    
-    else if (argc >= 3 && strcmp(argv[1], "forget") == 0)    
+    else if (argc >= 3 && strcmp(argv[1], "forget") == 0) 
     {
         char* userInputtedName;
         char* lowercaseName;
@@ -35,8 +35,7 @@ int main(int argc, char *argv[])
         // Check whether NAMEFILE exists -- if exists, cycle a linkedlist built from it and check whether Name To Delete exists.
         person* directory = getLinkedListFromNAMEFILE();
         FILE* file = fopen(NAMEFILE, "r");
-        if (file != NULL)
-        {
+        if (file != NULL) {
             person* current = directory; //head node for loop-checking
             int found = 0;
             while(current->next != NULL) 
@@ -124,8 +123,7 @@ int main(int argc, char *argv[])
 
         // Check whether NAMEFILE exists, if it does cycle through linked-list and check whether the Name To Add already exists
         FILE* file = fopen(NAMEFILE, "r");
-        if (file != NULL)
-        {
+        if (file != NULL) {
             person* directory = getLinkedListFromNAMEFILE();
             person* current = directory; // head node
             while (current->next != NULL) 
@@ -170,13 +168,25 @@ int main(int argc, char *argv[])
         // cycle through linked-list & compare lowercased names 
         person* directory = getLinkedListFromNAMEFILE();        
         person* current = directory; // head node
-        while (current->next != NULL) 
-        {
+
+        sortLinkedListByName(current);
+
+        while (current->next != NULL)  {
             int dateToday[3];
             getTodaysDate(dateToday);
 
+            // Make a copy of the date without touching the struct
+            // the argument passed to strtok is directly modified by it, which is insane and ultimately another example of why Rust will be overtaken by C once all the programmers with long socks all get into upper management
+            char* dateCopy = malloc(strlen(current->next->date) + 1);
+            if (dateCopy == NULL) {
+                printf("ERROR: Memory allocation problem.\nThis is likely a system or memory management issue beyond the control of this program.\n");
+                exit(1); // The memory allocation operation failed }
+            }
+            strcpy(dateCopy, current->next->date);
+            char* token = strtok(dateCopy, "/");
+            free(dateCopy);
+
             // parse dictionary date (e.g. 19/9/1999) into comparator
-            char* token = strtok(current->next->date, "/");
             int comparator[3];                
             int i = 0;
 
@@ -190,11 +200,10 @@ int main(int argc, char *argv[])
             int elapsedCheck = getTimespan();
 
             // TODO: in-order insertion in the linked list
-            // TODO: \n in longer names in checkall function
 
             // This just spaces the names appropriately
             int len = strlen(current->next->name);
-            if (len >= 23){
+            if (len >= 23) {
                 printf("\n%s\t- last checked\t%i\tdays ago", current->next->name, daysSinceLastChecked);
             }
             else if (len >= 16) {
@@ -211,7 +220,7 @@ int main(int argc, char *argv[])
             current = current->next; 
         }
 
-        // ask user if they want to reset everything
+        // ask user if they want to reset dates
         printf("\n\nReset number of days passed for ALL entries to 0?\nY/N: ");
         char yesNo;
         scanf(" %[^\n]%*c", &yesNo); // get a single char
@@ -227,6 +236,8 @@ int main(int argc, char *argv[])
             }
             rewriteDirectory(directory); // write linked list to NAMEFILE
             printf("Changed lookup date for ALL to today's date.");    
+        } else {
+            rewriteDirectory(directory); 
         }
         
         printf("\n");
@@ -252,6 +263,7 @@ int main(int argc, char *argv[])
         // cycle through linked-list & compare lowercased names 
         person* directory = getLinkedListFromNAMEFILE();
         person* current = directory; // head node
+
         while (current->next != NULL) 
         {
             char* lowercaseLinkedListName;

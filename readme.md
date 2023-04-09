@@ -1,13 +1,13 @@
 # people
 
-This is a CLI tool for tracking the number of days since you have made contact with people.  
-Why a CLI? It is discreet and the vast majority of people don't even know what a terminal is.  
+**what is?**  ー This is a CLI tool for tracking the number of days since you have made contact with people.  
+**why a CLI?**  ー 99% of people don't even know what a terminal is; discreet and lightweight  
+**why did you write this in C?**  ー python was boring  
 
 [usage](#usage)  
 [installation](#installation)  
 [walkthrough](#walkthrough)  
 [making accessible system-wide with an alias](#making-this-program-accessible-system-wide-with-an-alias)  
-
 
 ## usage
 ```
@@ -20,7 +20,7 @@ Why a CLI? It is discreet and the vast majority of people don't even know what a
 ```
 
 ## installation
-Download this repo using the green `<> Code` button above, or via the terminal:  
+Download this repo using the green `<>Code` button above, or via the terminal:  
 ```
 git clone https://github.com/CallumBeaney/people
 ```
@@ -39,6 +39,8 @@ Unless you wish to make this program accessible system-wide using an alias, you 
 ./people check fred durst
     fred durst - last checked 0 days ago
 ```
+Case isn't important; spelling is.  
+  
 3. You will be prompted with an offer to reset the date associated with this name.  Let's imagine that, 2 months earlier, 'Joanna Newsom' was added to this list, and you want to see the full list. You won't have a `timespan` file initially; one will be made automatically. 
 
 ```       
@@ -101,9 +103,10 @@ By now, you can call your program from anywhere with just e.g. 'people check all
 5. ...and with the given path, it might look something like this:
 ``` 
 #define TIMEFILE "/Users/userName/Applications/people/src/timespan"
-#define NAMEFILE "/Users/userName/Applications/people/src/yellowpages"
+#define NAMEFILE "/Users/userName/Applications/people/src/yellowpages"  
 ```  
-If you want to make the files invisible in the main folder system, you can prepend with a dot on macOS e.g. `~/people/.timespan`.
+If you want to make the files invisible in the main folder system, you can prepend with a dot on macOS e.g. `~/people/.timespan`.  
+  
 6. Make the program with e.g. GCC make utility from the `/src/` directory: 
 ```
 gcc -o people main.c helpers.c

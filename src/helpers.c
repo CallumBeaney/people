@@ -51,6 +51,10 @@ int getTimespan(void){
 char* concatArgumentVector(int argc, char* argv[])
 {
     char* buffer = (char *) malloc(100);
+    if (buffer == NULL) {
+        printf("ERROR: Memory allocation problem.\nThis is likely a system or memory management issue beyond the control of this program.\n");
+        exit(1); // The memory allocation operation failed }
+    }    
     strcpy(buffer, argv[2]); 
     // 1. if user writes just one name [./people check BatMan] or writes [./people check 'john wick'], strcpy() handles it. 
     // 2. strcpy initialises the above array and appends \0 at the end.
@@ -88,6 +92,7 @@ void rewriteDirectory(person* head)
     person* current = head;
     while (current->next != NULL)
     {
+        // printf("date: %s\n",current->next->date);
         char buffer[100];
         snprintf(buffer, sizeof(buffer), "%s,%s\n", current->next->name, current->next->date);
         fprintf(file, "%s", buffer);
@@ -224,5 +229,34 @@ void freeList(person * head)
        head = head->next;
        free(tmp);
     }
+}
 
+
+void sortLinkedListByName(person* head) {
+    person *current, *index;
+    char tempName[50];
+    char tempDate[12];
+
+    if (head == NULL) {
+        return;
+    }
+    else {
+        current = head;
+        while (current != NULL) {
+            index = current->next;
+
+            while (index != NULL) {
+                if (strcasecmp(current->name, index->name) > 0) {
+                    strcpy(tempName, current->name);
+                    strcpy(tempDate, current->date);
+                    strcpy(current->name, index->name);
+                    strcpy(current->date, index->date);
+                    strcpy(index->name, tempName);
+                    strcpy(index->date, tempDate);
+                }
+                index = index->next;
+            }
+            current = current->next;
+        }
+    }
 }
