@@ -12,6 +12,18 @@
 
 /* ___________ FUNCTIONS BEGIN ___________ */
 
+void errorMessage(int info) {
+    printf("\n┌─┐┌─┐┌─┐┌─┐┬  ┌─┐\n├─┘├┤ │ │├─┘│  ├┤ \n┴  └─┘└─┘┴  ┴─┘└─┘\n\nSyntax:\tpeople\tadd\tforename surname\n\tpeople\tcheck\tforename surname\n\tpeople\tcheck\tall\n\tpeople\tforget\tforename surname\n\tpeople\tforget\tall\n\tpeople\tdays\t[number]\n\nE.g.\tpeople\tadd\tAmy\n\tpeople\tcheck\tJohn Wick\n\tpeople\tdays\t96\n\n");
+
+    if(info == 1)
+    {
+        // printf("This program was made by Callum Beaney in 2023, distributed under an MIT License.\n\n");
+        exit(0);
+    }
+
+    exit(1);
+}
+
 void setTimespan(int input) {
     FILE *file = fopen(TIMEFILE, "w");
     if (file == NULL)

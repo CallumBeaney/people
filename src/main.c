@@ -6,6 +6,9 @@
 #include "helpers.h"
 #include "constants.h"
 
+// TODO: Windows support
+// TODO: system("clear"); // or "cls" for Windows
+
 int main(int argc, char *argv[])
 {
 /* 
@@ -50,7 +53,7 @@ int main(int argc, char *argv[])
                     break;   
                 }
                 current = current->next; // move pointer onto next node. 
-                // Without this pointer relocation your terminal goes into an endless loop and you stay up exhausted and confused till 2AM repeatedly failing to notice this obvious error and feel a shame that though viewed from afar may seem to be but a tiny twinkling speck in the cavernous abyss of the great night sky, is in actuality a celstial behemoth of furiously combusting solar disgrace that will burn deep within your soul forever, consuming it until finally the last oxidizable molecule of your spirit is but a pitiful ember drifting in the wind along the shale afore the gloaming. 
+                // Without this pointer relocation your terminal goes into an endless loop and, suffering from the flu, you stay up exhausted and confused till 2AM repeatedly failing to notice this obvious error and feel a shame that though viewed from afar may seem to be but a tiny twinkling speck in the cavernous abyss of the great night sky, is in actuality a celstial behemoth of furiously combusting solar disgrace that will burn deep within your soul forever, consuming it until finally the last oxidizable molecule of your spirit is but a pitiful ember drifting in the wind along the shale afore the gloaming. 
             }
             if (found != 1) {
                 printf("\nERROR: this name was not found in your user list. Use [./people check all] to check your user list.\n\n");
@@ -146,7 +149,7 @@ int main(int argc, char *argv[])
         fclose(file);
 
         // If the program gets to here, then the user's inputted a new name. 
-        // If the file == NULL, the fopen below is going to initialise that namefile.
+        // If the file == NULL, the fopen below is going to initialise that namefile anyway.
         int dateToday[3];
         getTodaysDate(dateToday);
         char buffer[100];
@@ -325,12 +328,19 @@ int main(int argc, char *argv[])
         freeList(directory);
         return 1;
     }
-    // else    /*  // User has put in a bad input  */
-    // {   
-        printf("\n┌─┐┌─┐┌─┐┌─┐┬  ┌─┐\n├─┘├┤ │ │├─┘│  ├┤ \n┴  └─┘└─┘┴  ┴─┘└─┘\n\nSyntax:\tpeople\tadd\tforename surname\n\tpeople\tcheck\tforename surname\n\tpeople\tcheck\tall\n\tpeople\tforget\tforename surname\n\tpeople\tforget\tall\n\tpeople\tdays\tnumber [interval of days between checks]\n\nE.g.\tpeople\tadd\tAmy\n\tpeople\tcheck\tJohn Wick\n\tpeople\tdays\t96\n\n");
-        exit(1);
-    // }    
+/*  
+    // ERROR MESSAGE: User doesn't know how to use the program and wants to know
+*/
+    else if (argc == 2 && strcmp(argv[1], "info") == 0 ) {
+        errorMessage(1);
+    }
+/*  
+    // ERROR MESSAGE: User doesn't know how to use the program and probably needs help
+*/
+    else {
+        errorMessage(0);
+    }
 
     // the program should never get here
-    exit(1);
+    exit(2);
 }

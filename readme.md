@@ -1,8 +1,9 @@
 # people
 
 **what is?**  ー This is a CLI tool for tracking the number of days since you have made contact with people.  
-**why a CLI?**  ー lightweight & discreet (99% of people don't even know what a terminal is)    
-  
+**why a CLI?**  ー 99% of people don't know what a terminal is -- lightweight & discreet  
+**OS?** ー This is compiled to a Unix Executable File and should run on Linux, macOS, Ubuntu, Solaris etc. I've avoided using POSIX libs and adapting the source code for Windows will be trivial.  
+    
 [usage](#usage)  
 [installation](#installation)  
 [walkthrough](#walkthrough)  
