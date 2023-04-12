@@ -103,7 +103,7 @@ void rewriteDirectory(person* head)
 }
 
 
-const int* getTodaysDate(int *date)
+void getTodaysDate(int *date)
 {
     time_t t = time(NULL);               // get current time data
     struct tm *timeData = localtime(&t); // parse into fields using time.h lib fn
@@ -112,9 +112,34 @@ const int* getTodaysDate(int *date)
     date[1] = timeData->tm_mon + 1;    // add 1 to the tm_mon field
     date[2] = timeData->tm_year + 1900; // add 1900 to tm_year field to get actual year value
     // printf("Today's Date: %i - %i - %i\n", date[2], date[1], date[0]);
-
-    return date;
 }
+
+time_t timeof(int day, int mon, int yr)
+{
+    struct tm tm;
+    time_t tod;
+
+    memset(&tm, 0, sizeof(tm));
+
+    // tm.tm_year = yr - 1900;
+    tm.tm_year = yr - 1900;
+    tm.tm_mon = mon - 1;
+    tm.tm_mday = day;
+    tm.tm_hour = 0; // set to midnight to avoid issues with DST crossover or leap seconds
+    tm.tm_isdst = -1; // let mktime() determine the correct DST offset
+
+    char buffer[80];
+    strftime(buffer, 80, "%Y-%m-%d %H:%M:%S", &tm);
+    // printf("tm: %s\n", buffer);
+
+    tod = mktime(&tm);
+
+    strftime(buffer, 80, "%Y-%m-%d %H:%M:%S", localtime(&tod));
+    // printf("tod: %s\n", buffer);
+
+    return tod;
+}
+
 
 int compareDates(int* today, int* comparisonDate)
 {
@@ -124,29 +149,47 @@ int compareDates(int* today, int* comparisonDate)
 
     presentDate = timeof(today[0], today[1], today[2]);
     pastDate = timeof(comparisonDate[0], comparisonDate[1], comparisonDate[2]);
+    
 
     difference = presentDate - pastDate;
     difference /= (24 * 60 * 60);
+    // printf("difference: %i\n", (int) difference);
 
     return (int) difference;
 }
 
 
-time_t timeof(int day, int mon, int yr)
-{
-    struct tm tm;
-    time_t tod;
+// int compareDates(int* today, int* comparisonDate)
+// {
+//     time_t presentDate;
+//     time_t pastDate;
+//     time_t difference;
 
-    memset(&tm, 0, sizeof(tm));
+//     presentDate = timeof(today[0], today[1], today[2]);
+//     pastDate = timeof(comparisonDate[0], comparisonDate[1], comparisonDate[2]);
 
-    tm.tm_year = yr - 1900;
-    tm.tm_mon = mon - 1;
-    tm.tm_mday = day;
-    tm.tm_hour = 1; // minimize issues with DST crossover or leap seconds
+//     difference = presentDate - pastDate;
+//     difference /= (24 * 60 * 60);
 
-    tod = mktime(&tm);
-    return tod;
-}
+//     return (int) difference;
+// }
+
+
+// time_t timeof(int day, int mon, int yr)
+// {
+//     struct tm tm;
+//     time_t tod;
+
+//     memset(&tm, 0, sizeof(tm));
+
+//     tm.tm_year = yr - 1900;
+//     tm.tm_mon = mon - 1;
+//     tm.tm_mday = day;
+//     tm.tm_hour = 1; // minimize issues with DST crossover or leap seconds
+
+//     tod = mktime(&tm);
+//     return tod;
+// }
 
 
 

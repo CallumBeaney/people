@@ -49,7 +49,8 @@ int main(int argc, char *argv[])
                     free(lowercaseLinkedListName);
                     break;   
                 }
-                current = current->next; // move pointer onto next node. Without this your terminal goes into an endless loop and you stay up to 1AM repeatedly failing to notice this obvious error
+                current = current->next; // move pointer onto next node. 
+                // Without this pointer relocation your terminal goes into an endless loop and you stay up exhausted and confused till 2AM repeatedly failing to notice this obvious error and feel a shame that though viewed from afar may seem to be but a tiny twinkling speck in the cavernous abyss of the great night sky, is in actuality a celstial behemoth of furiously combusting solar disgrace that will burn deep within your soul forever, consuming it until finally the last oxidizable molecule of your spirit is but a pitiful ember drifting in the wind along the shale afore the gloaming. 
             }
             if (found != 1) {
                 printf("\nERROR: this name was not found in your user list. Use [./people check all] to check your user list.\n\n");
@@ -69,7 +70,7 @@ int main(int argc, char *argv[])
         }
         fclose(file);
 
-        // if the program gets here, the user's inputted an existing name and the People List NAMEFILE exists.
+        // if the program gets here, the user's inputted an existing name + the People List NAMEFILE exists.
         // Rewrite the directory to the NAMEFILE by excluding the node with the unwanted matching ->name
         file = fopen(NAMEFILE,"w");
         person* current = directory;
@@ -121,7 +122,7 @@ int main(int argc, char *argv[])
         char* lowercaseName;
         lowercaseName = getLowercase(userInputtedName);
 
-        // Check whether NAMEFILE exists, if it does cycle through linked-list and check whether the Name To Add already exists
+        // Check whether NAMEFILE exists, if it does cycle through linked-list and check whether the Name-To-Add already exists
         FILE* file = fopen(NAMEFILE, "r");
         if (file != NULL) {
             person* directory = getLinkedListFromNAMEFILE();
@@ -132,7 +133,7 @@ int main(int argc, char *argv[])
                 lowercaseLinkedListName = getLowercase(current->next->name);
                 if(strcmp(lowercaseName, lowercaseLinkedListName) == 0)
                 {          
-                    printf("\n%s is already in your People List!\nTo check: [ ./people check %s ]\n\n", userInputtedName, userInputtedName);
+                    printf("\n\t%s is already in your People List!\nTo check: [ ./people check %s ]\n\n", userInputtedName, userInputtedName);
                     free(lowercaseLinkedListName);
                     free(userInputtedName);
                     freeList(directory);
@@ -176,21 +177,20 @@ int main(int argc, char *argv[])
             getTodaysDate(dateToday);
 
             // Make a copy of the date without touching the struct
-            // the argument passed to strtok is directly modified by it, which is insane and ultimately another example of why Rust will be overtaken by C once all the programmers with long socks all get into upper management
-            char* dateCopy = malloc(strlen(current->next->date) + 1);
+            char* dateCopy = strdup(current->next->date);
             if (dateCopy == NULL) {
-                printf("ERROR: Memory allocation problem.\nThis is likely a system or memory management issue beyond the control of this program.\n");
-                exit(1); // The memory allocation operation failed }
+                printf("ERROR: Memory allocation error.\n");
+                exit(1);
             }
-            strcpy(dateCopy, current->next->date);
-            char* token = strtok(dateCopy, "/");
-            free(dateCopy);
 
-            // parse dictionary date (e.g. 19/9/1999) into comparator
+            //strtok() modifies the string it is called on and replaces the delimiter with a null terminator. 
+            char* token = strtok(dateCopy, "/");
+
             int comparator[3];                
             int i = 0;
 
             while (token != NULL) {
+                // parse node date (e.g. 19/9/1999) into comparator
                 comparator[i] = atoi(token);
                 i++;
                 token = strtok(NULL, "/");
@@ -198,8 +198,6 @@ int main(int argc, char *argv[])
 
             int daysSinceLastChecked = compareDates(dateToday, comparator);
             int elapsedCheck = getTimespan();
-
-            // TODO: in-order insertion in the linked list
 
             // This just spaces the names appropriately
             int len = strlen(current->next->name);
@@ -235,7 +233,7 @@ int main(int argc, char *argv[])
                 current = current->next; 
             }
             rewriteDirectory(directory); // write linked list to NAMEFILE
-            printf("Changed lookup date for ALL to today's date.");    
+            printf("Changed lookup date for ALL to today's date.\n\n");    
         } else {
             rewriteDirectory(directory); 
         }
@@ -274,12 +272,21 @@ int main(int argc, char *argv[])
                 int dateToday[3];
                 getTodaysDate(dateToday);
 
-                // parse dictionary date (e.g. 19/9/1999) into comparator
-                char* token = strtok(current->next->date, "/");
+                // Make a copy of the date without touching the struct
+                char* dateCopy = strdup(current->next->date);
+                if (dateCopy == NULL) {
+                    printf("ERROR: Memory allocation error.\n");
+                    exit(1);
+                }
+
+                //strtok() modifies the string it is called on and replaces the delimiter with a null terminator. 
+                char* token = strtok(dateCopy, "/");
+
                 int comparator[3];                
                 int i = 0;
 
                 while (token != NULL) {
+                    // parse node date (e.g. 19/9/1999) into comparator
                     comparator[i] = atoi(token);
                     i++;
                     token = strtok(NULL, "/");
@@ -299,7 +306,7 @@ int main(int argc, char *argv[])
                     snprintf(current->next->date, sizeof(current->next->date), "%i/%i/%i", dateToday[0], dateToday[1], dateToday[2]);
 
                     rewriteDirectory(directory); // write linked list to NAMEFILE
-                    printf("Changed lookup date for %s to today's date.\n\n", userInputtedName);    
+                    printf("\nChanged lookup date for %s to today's date.\n\n", userInputtedName);    
                 }
                 
                 free(lowercaseName);
@@ -318,11 +325,11 @@ int main(int argc, char *argv[])
         freeList(directory);
         return 1;
     }
-    else    /*  // User has put in a bad input  */
-    {   
+    // else    /*  // User has put in a bad input  */
+    // {   
         printf("\n┌─┐┌─┐┌─┐┌─┐┬  ┌─┐\n├─┘├┤ │ │├─┘│  ├┤ \n┴  └─┘└─┘┴  ┴─┘└─┘\n\nSyntax:\tpeople\tadd\tforename surname\n\tpeople\tcheck\tforename surname\n\tpeople\tcheck\tall\n\tpeople\tforget\tforename surname\n\tpeople\tforget\tall\n\tpeople\tdays\tnumber [interval of days between checks]\n\nE.g.\tpeople\tadd\tAmy\n\tpeople\tcheck\tJohn Wick\n\tpeople\tdays\t96\n\n");
         exit(1);
-    }    
+    // }    
 
     // the program should never get here
     exit(1);

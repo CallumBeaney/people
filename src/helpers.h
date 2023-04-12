@@ -8,7 +8,7 @@
 void setTimespan(int input);
 int getTimespan(void);
 
-const int *getTodaysDate(int *date);
+void getTodaysDate(int *date);
 int compareDates(int *today, int *comparisonDate);
 time_t timeof(int mon, int day, int yr);
 
