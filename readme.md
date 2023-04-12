@@ -1,9 +1,8 @@
 # people
 
 **what is?**  ー This is a CLI tool for tracking the number of days since you have made contact with people.  
-**why a CLI?**  ー 99% of people don't even know what a terminal is; discreet and lightweight  
-**why did you write this in C?**  ー python was boring  
-
+**why a CLI?**  ー lightweight & discreet (99% of people don't even know what a terminal is)    
+  
 [usage](#usage)  
 [installation](#installation)  
 [walkthrough](#walkthrough)  
@@ -27,49 +26,54 @@ git clone https://github.com/CallumBeaney/people
 Unless you wish to make this program accessible system-wide using an alias, you only need the executable named `people`.
 
 ## walkthrough
-1. First, add a user. If you don't have a `yellowpages` file (you won't initially), one will be created.   
+1. First, add some people:  
 ```
 ./people add Fred Durst 
     Added Fred Durst to your People List
 ./people add David Hume
     Added David Hume to your People List
 ```
-2. Now let's check one of them:
+2. Check one of them:
 ```
 ./people check fred durst
     fred durst - last checked 0 days ago
 ```
 Case isn't important; spelling is.  
+You will be prompted with an offer to reset the date associated with this name.   
   
-3. You will be prompted with an offer to reset the date associated with this name.  Let's imagine that, 2 months earlier, 'Joanna Newsom' was added to this list, and you want to see the full list. You won't have a `timespan` file initially; one will be made automatically. 
+3. Imagine: 2 months earlier, 'Joanna Newsom' was added to this list, and you want to see the full list.  
 
 ```       
 ./people check all
-Joanna Newsom   - last checked  59      days ago  ! IMPORTANT
-Fred Durst      - last checked  0       days ago
+
 David Hume      - last checked  0       days ago
+Fred Durst      - last checked  0       days ago
+Joanna Newsom   - last checked  59      days ago  ! IMPORTANT
 ```
-Again, you will be prompted with an offer to reset the date associated with these names.  
-
-4.  That `! IMPORTANT` is triggered when your checking interval stored in the file `timespan` is smaller than the elapsed days since you last checked a person. To change that interval, run the following command with your preferred number of days before you're given a warning:
-
+Again, you will be prompted with an offer to reset the dates associated with these names to 0 days.  
+That `! IMPORTANT` is triggered when your checking interval stored in the file `timespan` is smaller than the elapsed days since you last checked a person.  
+You won't have a `timespan` file initially; one will be made automatically.  
+  
+4. To change that interval, run the following command with your preferred number of days before you're given a warning:  
 ```
 ./people days 100                 
     Interval to compare dates set to: 100 days 
-./people check all        
-    Joanna Newsom   - last checked  59      days ago
-    Fred Durst      - last checked  0       days ago
-    David Hume      - last checked  0       days ago
-```
 
-5. To stop checking in on a person:
+./people check all        
+    David Hume      - last checked  0       days ago
+    Fred Durst      - last checked  0       days ago
+    Joanna Newsom   - last checked  59      days ago
+```
+The program will auto-sort your name list alphabetically when you do a checkall.  
+  
+5. To stop checking in on a person:  
 ```
 ./people forget fred durst
 ```
-6. Your `yellowpages` file would then look like below. If you want to manually add a large number of names, you can, however it is imperative that there is an empty line as the final line in the file. The syntax must always follow the below example, with no whitespace after the comma, and D/M/Y dating. If it gets corrupted, you can delete it, and when you next run an ADD command, a fresh file will be generated.
+6. Your `yellowpages` file would then look like below. You can add names manually; the syntax must follow the below example & there must be an empty final line in the file.  If it gets corrupted, you can delete it, and when you next run an ADD command, a fresh file will be generated.
 ```
-1   Joanna Newsom,29/1/2023
-2   David Hume,29/3/2023
+1   David Hume,29/3/2023
+2   Joanna Newsom,29/1/2023
 3      
 ```
 7. To forget all people in your list, just use:
@@ -93,7 +97,7 @@ alias people='/Users/username/Applications/program_folder/people'
 ```
 source ~/.zshrc
 ```  
-By now, you can call your program from anywhere with just e.g. 'people check all', but it will need to be configured to only read and write your People List data from a specific folder.  
+Now you can call your program from anywhere with just e.g. 'people check all', **but** it will need to be configured to only read and write your People List data from a specific folder.  
   
 4. Move to the `/src/` directory containing the source files, open `constants.h`, and at lines 4 and 5, change the inside of the quotes to the path of that folder. It should look initially look something like this:
 ``` 
