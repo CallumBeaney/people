@@ -171,40 +171,6 @@ int compareDates(int* today, int* comparisonDate)
 }
 
 
-// int compareDates(int* today, int* comparisonDate)
-// {
-//     time_t presentDate;
-//     time_t pastDate;
-//     time_t difference;
-
-//     presentDate = timeof(today[0], today[1], today[2]);
-//     pastDate = timeof(comparisonDate[0], comparisonDate[1], comparisonDate[2]);
-
-//     difference = presentDate - pastDate;
-//     difference /= (24 * 60 * 60);
-
-//     return (int) difference;
-// }
-
-
-// time_t timeof(int day, int mon, int yr)
-// {
-//     struct tm tm;
-//     time_t tod;
-
-//     memset(&tm, 0, sizeof(tm));
-
-//     tm.tm_year = yr - 1900;
-//     tm.tm_mon = mon - 1;
-//     tm.tm_mday = day;
-//     tm.tm_hour = 1; // minimize issues with DST crossover or leap seconds
-
-//     tod = mktime(&tm);
-//     return tod;
-// }
-
-
-
 void pushPersonToLinkedList(person* head, char* name, char* date) 
 {             
     // set current to be the last node in the list
@@ -288,6 +254,7 @@ void freeList(person * head)
 
 
 void sortLinkedListByName(person* head) {
+    // generic bubble sort
     person *current, *index;
     char tempName[50];
     char tempDate[12];
