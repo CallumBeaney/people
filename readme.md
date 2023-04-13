@@ -24,7 +24,11 @@ Download this repo using the green `<>Code` button above, or via the terminal:
 ```
 git clone https://github.com/CallumBeaney/people
 ```
-Unless you wish to make this program accessible system-wide using an alias, you only need the executable named `people`.
+If you have any problems running the executable file due to e.g. a `bad CPU` error, cd into the `src` directory, and make the program with e.g. GCC make utility like so: 
+```
+gcc -o people main.c helpers.c
+```
+Unless you wish to make this program accessible system-wide using an alias, or have the above execution problems, you only need the executable named `people`.  
 
 ## walkthrough
 1. First, add some people:  
