@@ -10,6 +10,11 @@
 #include <ctype.h> // tolower(), isdigit()
 
 
+// for getNamefilePath and getTimefilePath
+// caches results so we only ever allocate once and don't have to worry about freeing
+char* namefile = NULL;
+char* timefile = NULL;
+
 /* ___________ FUNCTIONS BEGIN ___________ */
 
 void errorMessage(int info) {
@@ -25,7 +30,7 @@ void errorMessage(int info) {
 }
 
 void setTimespan(int input) {
-    FILE *file = fopen(TIMEFILE, "w");
+    FILE *file = fopen(getTimefilePath(), "w");
     if (file == NULL)
     {
         printf("\nNo 'timespan' file present in program directory.\nCreating file with chosen value...\n");
@@ -38,14 +43,14 @@ void setTimespan(int input) {
 
 int getTimespan(void){
     int timespanData;
-    FILE *file = fopen(TIMEFILE, "r");
+    FILE *file = fopen(getTimefilePath(), "r");
     if (file == NULL)
     {
         // File does not exist, initialize variable to default value
         printf("\nThe file 'timespan' appears to be missing from the data folder.\nCreating 'timespan' data file with default interval of 30 days.\nTo change, use: 'people time [number]\n");
         fclose(file);
         timespanData = 30;
-        file = fopen(TIMEFILE, "w");
+        file = fopen(getTimefilePath(), "w");
         fprintf(file, "%d", timespanData);
         fclose(file);
         return timespanData;
@@ -99,7 +104,7 @@ char* getLowercase(char* userInput)
 void rewriteDirectory(person* head) 
 {
     // here you are basically rebuilding the yellowpages directory file from a linked list you have made an edit to e.g. updating the date of a Person
-    FILE* file = fopen(NAMEFILE, "w");
+    FILE* file = fopen(getNamefilePath(), "w");
 
     person* current = head;
     while (current->next != NULL)
@@ -190,10 +195,10 @@ void pushPersonToLinkedList(person* head, char* name, char* date)
 }
 
 
-person* getLinkedListFromNAMEFILE(void)
+person* getLinkedListFromNamefile(void)
 {
     // Check whether NAMEFILE exists and close if not (e.g. user tries to check a name before adding a name)
-    FILE *file = fopen(NAMEFILE, "r");
+    FILE *file = fopen(getNamefilePath(), "r");
     if (file == NULL) {
         printf("\nYou don't have anyone saved to your People List!\nAdd someone using [./people add forename surname] and try again!\n\n");
         fclose(file);
@@ -216,7 +221,7 @@ person* getLinkedListFromNAMEFILE(void)
         current = current->next;
     }
 
-    file = fopen(NAMEFILE, "r");
+    file = fopen(getNamefilePath(), "r");
     if (file == NULL) {
         printf("Error: failed to open file\n");
         fclose(file);
@@ -282,3 +287,35 @@ void sortLinkedListByName(person* head) {
         }
     }
 }
+
+char* getNamefilePath(void) {
+    if (namefile == NULL) {
+        char* env = getenv("PEOPLE_NAMEFILE");
+        if (env == NULL) {
+            char* home = getenv("HOME");
+            namefile = malloc(sizeof(char) * (strlen(home) + 10)); // allocate enough size for home directory, plus 10 bytes for "/namefile\0".
+            strcpy(namefile, home);
+            strcat(namefile, "/namefile");
+        } else {
+          namefile = env;
+        }
+    }
+
+    return namefile;
+}
+
+char* getTimefilePath(void) {
+    if (timefile == NULL) {
+        char* env = getenv("PEOPLE_TIMEFILE");
+        if (env == NULL) {
+            char* home = getenv("HOME");
+            timefile = malloc(sizeof(char) * (strlen(home) + 10)); // allocate enough size for home directory, plus 10 bytes for "/timefile\0".
+            strcpy(timefile, home);
+            strcat(timefile, "/timefile");
+        } else {
+          timefile = env;
+        }
+    }
+
+    return timefile;
+ }

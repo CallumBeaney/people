@@ -18,10 +18,14 @@ char* getLowercase(char* name);
 void errorMessage(int info);
 
 // LinkedList & Database handling
-person* getLinkedListFromNAMEFILE(void);
+person* getLinkedListFromNamefile(void);
 void pushPersonToLinkedList(person * head, char* name, char* date);
 void freeList(person *head);
 void rewriteDirectory(person* head);
 void sortLinkedListByName(person* head);
+
+char* getNamefilePath(void);
+char* getTimefilePath(void);
+
 
 #endif
