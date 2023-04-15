@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 */    
     if (argc == 3 && strcmp(argv[1], "forget") == 0 && strcmp(argv[2], "all") == 0) 
     {
-        int purge = remove(NAMEFILE);
+        int purge = remove(getNamefilePath());
         if(purge == 0) {
             printf("\nPeople List deleted successfully.\nA new one will be generated when you next use [./people add _____]\n\n");
             return 0;
@@ -36,8 +36,8 @@ int main(int argc, char *argv[])
         lowercaseName = getLowercase(userInputtedName);
 
         // Check whether NAMEFILE exists -- if exists, cycle a linkedlist built from it and check whether Name To Delete exists.
-        person* directory = getLinkedListFromNAMEFILE();
-        FILE* file = fopen(NAMEFILE, "r");
+        person* directory = getLinkedListFromNamefile();
+        FILE* file = fopen(getNamefilePath(), "r");
         if (file != NULL) {
             person* current = directory; //head node for loop-checking
             int found = 0;
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
 
         // if the program gets here, the user's inputted an existing name + the People List NAMEFILE exists.
         // Rewrite the directory to the NAMEFILE by excluding the node with the unwanted matching ->name
-        file = fopen(NAMEFILE,"w");
+        file = fopen(getNamefilePath(), "w");
         person* current = directory;
         while (current->next != NULL)
         {
@@ -126,9 +126,9 @@ int main(int argc, char *argv[])
         lowercaseName = getLowercase(userInputtedName);
 
         // Check whether NAMEFILE exists, if it does cycle through linked-list and check whether the Name-To-Add already exists
-        FILE* file = fopen(NAMEFILE, "r");
+        FILE* file = fopen(getNamefilePath(), "r");
         if (file != NULL) {
-            person* directory = getLinkedListFromNAMEFILE();
+            person* directory = getLinkedListFromNamefile();
             person* current = directory; // head node
             while (current->next != NULL) 
             {
@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
         getTodaysDate(dateToday);
         char buffer[100];
 
-        file = fopen(NAMEFILE, "a");
+        file = fopen(getNamefilePath(), "a");
         snprintf(buffer, sizeof(buffer), "%s,%i/%i/%i\n", userInputtedName, dateToday[0], dateToday[1], dateToday[2]);
         fprintf(file, "%s", buffer);
         fclose(file);
@@ -170,7 +170,7 @@ int main(int argc, char *argv[])
     else if (argc == 3 && strcmp(argv[1], "check") == 0 && strcmp(argv[2], "all") == 0) 
     {
         // cycle through linked-list & compare lowercased names 
-        person* directory = getLinkedListFromNAMEFILE();        
+        person* directory = getLinkedListFromNamefile();        
         person* current = directory; // head node
 
         sortLinkedListByName(current);
@@ -262,7 +262,7 @@ int main(int argc, char *argv[])
         lowercaseName = getLowercase(userInputtedName);
         
         // cycle through linked-list & compare lowercased names 
-        person* directory = getLinkedListFromNAMEFILE();
+        person* directory = getLinkedListFromNamefile();
         person* current = directory; // head node
 
         while (current->next != NULL) 
