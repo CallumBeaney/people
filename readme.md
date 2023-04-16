@@ -6,7 +6,8 @@
 [usage](#usage)  
 [installation script on linux](#installation-script-for-linux)  
 [manual installation](#manual-installation)  
-[walkthrough](#walkthrough)  
+[creating an alias](#creating-an-alias)  
+[usage walkthrough](#walkthrough)  
 
 
 ## usage
@@ -25,7 +26,7 @@ If you are using a linux distribution, you can simply run this command in the pr
 ```bash
 sudo chmod +rwx install.sh;./install.sh
 ```
-You might need to open new terminal window right after installation to be able to call `people` with its alias.  
+You might need to open new terminal window right after installation to be able to call `people` with its alias like e.g. `people check all` sans the `./`.  
 <br>
 
 ## manual installation
@@ -33,12 +34,15 @@ Download this repo using the green `<>Code` button above, or via the terminal:
 ```
 git clone https://github.com/CallumBeaney/people  
 ```  
-The provided executable was compiled on an AArch64 processor. While the source code is compatible with Linux, macOS, Ubuntu, Solaris etc.   running it on other operating systems may result in a `bad CPU` error. To fix this, simply `cd` into the `src` directory, and make the program with e.g. GCC make utility like so, and the source will be repackaged for your setup:  
+The provided executable was compiled on an AArch64 processor. While the source code is compatible with Linux, macOS, Ubuntu, Solaris etc.   running it on other operating systems may result in a `bad CPU` error. To fix this, simply make the program with e.g. GCC make utility like so, and the source will be repackaged for your setup:  
 ```
-gcc -o people main.c helpers.c
+gcc -o people src/main.c src/helpers.c
 ```
   
-#### creating an alias
+  
+## creating an alias
+N.B. If you have used `install.sh` this will be done for you.  
+  
 For the sake of being able to quickly check without moving to the containing folder, you can create an alias and add it to your PATH.  
 If using a macOS, the process will look like this:  
 
@@ -85,7 +89,7 @@ source ~/.zshrc
 Case isn't important; spelling is.  
 You will be prompted with an offer to reset the date associated with this name.   
   
-3. Imagine: 2 months earlier, 'Joanna Newsom' was added to this list, and you want to see the full list.  
+3. Imagine that two months earlier 'Joanna Newsom' was added to this list:
 
 ```       
 ./people check all
