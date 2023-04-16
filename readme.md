@@ -4,10 +4,10 @@
 **why a CLI?**  ー 99% of people don't know what a terminal is -- lightweight & discreet  
     
 [usage](#usage)  
-[installation](#installation)  
+[installation script on linux](#installation-script-for-linux)  
+[manual installation](#manual-installation)  
 [walkthrough](#walkthrough)  
-[making accessible system-wide with an alias](#making-this-program-accessible-system-wide-with-an-alias)  
-[porting to other OS's](#porting)
+
 
 ## usage
 ```
@@ -20,16 +20,52 @@
 ./people  info
 ```
 
-## installation
+## installation script for linux
+If you are using a linux distribution, you can simply run this command in the program's directory:
+```bash
+sudo chmod +rwx install.sh;./install.sh
+```
+You might need to open new terminal window right after installation to be able to call `people` with its alias.  
+<br>
+
+## manual installation
 Download this repo using the green `<>Code` button above, or via the terminal:  
 ```
-git clone https://github.com/CallumBeaney/people
-```
-If you have any problems running the executable file due to e.g. a `bad CPU` error, cd into the `src` directory, and make the program with e.g. GCC make utility like so, and it should handle the code as required:  
+git clone https://github.com/CallumBeaney/people  
+```  
+The provided executable was compiled on an AArch64 processor. While the source code is compatible with Linux, macOS, Ubuntu, Solaris etc.   running it on other operating systems may result in a `bad CPU` error. To fix this, simply `cd` into the `src` directory, and make the program with e.g. GCC make utility like so, and the source will be repackaged for your setup:  
 ```
 gcc -o people main.c helpers.c
 ```
-Otherwise you only need the executable named `people`.  
+  
+#### creating an alias
+For the sake of being able to quickly check without moving to the containing folder, you can create an alias and add it to your PATH.  
+If using a macOS, the process will look like this:  
+
+1. Open a terminal and type:
+```
+nano ~/.zshrc
+```  
+2. In the file, add the following lines with the path to the executable 'people' replacing the paths below. Do not remove `:$PATH` from within the quotes.  
+```
+export PATH="/Users/username/Applications/program_folder/people:$PATH"
+alias people='/Users/username/Applications/program_folder/people'
+```  
+3. Then exit and save by `^X` and submitting `Y` to confirm save on exit, and then reload your profile file by running:
+```
+source ~/.zshrc
+```  
+4. You can now run People like this:  
+
+```
+% people add John Titor        
+	Added John Titor to your People List
+% people check John titor
+	John titor - last checked 0 days ago
+    Reset number of days passed to 0?
+    Y/N: n
+```
+
 
 ## walkthrough
 1. First, add some people:  
@@ -88,41 +124,4 @@ The program will auto-sort your name list alphabetically when you do a checkall.
 ```
 ./people forget all
 ```
-## installation script
-If you are using a linux distribution, you can simply run this command in the program's directory
-```bash
-sudo chmod +rwx install.sh;./install.sh
-```
-You might need to open new terminal window right after installation to be able to call `people` with its alias.
-
-## making this program accessible system-wide with an alias
-For the sake of being able to quickly check without moving to the containing folder and executing from there like a standard C executable, here is how you can create an alias and add it to your PATH. You can find instructions on how to do this online for your specific operating system. If using a macOS, the process will look like this:  
-
-1. Open a terminal and type:
-```
-nano ~/.zshrc
-```  
-2. In the file, add the following lines with the path to the executable 'people' replacing the paths below. Do not remove `:$PATH` from within the quotes.  
-```
-export PATH="/Users/username/Applications/program_folder/people:$PATH"
-alias people='/Users/username/Applications/program_folder/people'
-```  
-3. Then exit and save by `^X` and submitting `Y` to confirm save on exit, and then reload your profile file by running:
-```
-source ~/.zshrc
-```  
-4. You can now run People like this:  
-
-```
-% people add John Titor        
-	Added John Titor to your People List
-% people check John titor
-	John titor - last checked 0 days ago
-    Reset number of days passed to 0?
-    Y/N: n
-```
-
-## porting  
-This is compiled to a Unix Executable File and should run on Linux, macOS, Ubuntu, Solaris etc.  
-With the exception of mkdir I've avoided using POSIX libs and adapting the source code for Windows should be trivial.  
   
