@@ -14,11 +14,10 @@ int main(int argc, char *argv[])
     PRINT INFO: If no parameters are given, program should guide the user by printing out the instructions.
 */
     if (argc == 1)
-    {
+    {   
+        // if 0-argument program execution condition isn't caught, it will segfault.
         errorMessage(1);
     }
-/* 
-
 /* 
     DELETE DIRECTORY: people forget all 
 */    
@@ -43,7 +42,7 @@ int main(int argc, char *argv[])
         userInputtedName = concatArgumentVector(argc, argv);
         lowercaseName = getLowercase(userInputtedName);
 
-        // Check whether NAMEFILE exists -- if exists, cycle a linkedlist built from it and check whether Name To Delete exists.
+        // cycle through a linkedlist built from namefile and check whether Name To Delete exists.
         person* directory = getLinkedListFromNamefile();
         FILE* file = fopen(getNamefilePath(), "r");
         if (file != NULL) {
