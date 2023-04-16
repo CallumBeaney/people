@@ -88,6 +88,12 @@ The program will auto-sort your name list alphabetically when you do a checkall.
 ```
 ./people forget all
 ```
+## installation script
+If you are using a linux distribution, you can simply run this command in the program's directory
+```bash
+sudo chmod +rwx install.sh;./install.sh
+```
+You might need to open new terminal window right after installation to be able to call `people` with its alias.
 
 ## making this program accessible system-wide with an alias
 For the sake of being able to quickly check without moving to the containing folder and executing from there like a standard C executable, here is how you can create an alias and add it to your PATH. You can find instructions on how to do this online for your specific operating system. If using a macOS, the process will look like this:  
