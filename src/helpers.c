@@ -8,6 +8,7 @@
 #include <string.h>
 #include <time.h>
 #include <ctype.h> // tolower(), isdigit()
+#include <sys/stat.h> // N.B. If seeking to make this src windows-compatible, this library uses mkdir() which may need adaptation
 
 
 // for getNamefilePath and getTimefilePath
@@ -18,16 +19,26 @@ char* timefile = NULL;
 /* ___________ FUNCTIONS BEGIN ___________ */
 
 void errorMessage(int info) {
-    printf("\n┌─┐┌─┐┌─┐┌─┐┬  ┌─┐\n├─┘├┤ │ │├─┘│  ├┤ \n┴  └─┘└─┘┴  ┴─┘└─┘\n\nSyntax:\tpeople\tadd\tforename surname\n\tpeople\tcheck\tforename surname\n\tpeople\tcheck\tall\n\tpeople\tforget\tforename surname\n\tpeople\tforget\tall\n\tpeople\tdays\t[number]\n\nE.g.\tpeople\tadd\tAmy\n\tpeople\tcheck\tJohn Wick\n\tpeople\tdays\t96\n\n");
 
-    if(info == 1)
-    {
-        // printf("This program was made by Callum Beaney in 2023, distributed under an MIT License.\n\n");
-        exit(0);
+    printf("\n┌─┐┌─┐┌─┐┌─┐┬  ┌─┐\n├─┘├┤ │ │├─┘│  ├┤ \n┴  └─┘└─┘┴  ┴─┘└─┘\n");
+
+    if(info == 0) {   
+        printf("\nThis program was made by Callum Beaney in 2023, distributed under an MIT License.");
+        printf("\nPeople was written in C because Callum got bored doing it in Python.");
+
+        // if the below method isn't supported by the user terminal the link will be displayed as plain text.
+        char* url = "https://github.com/CallumBeaney/people";
+        printf("\nTo read the source code or report an issue, click here: \033]8;%s\007%s\033]8;;\n\033[0m", url, url); 
+        // must have "\n\033[0m" including the newline after the hyperlink-mode code to "unset" said mode & avoid terminal display problems
+        printf("\n");
     }
 
-    exit(1);
+    printf("\nSyntax:\tpeople\tadd\t[person's name]\n\tpeople\tcheck\t[person's name OR substring thereof]\n\tpeople\tcheck\tall\n\tpeople\tforget\t[person's name]\n\tpeople\tforget\tall\n\tpeople\tdays\t[number]\n\tpeople\tinfo\n\nE.g.\tpeople\tadd\tAmy from work\n\tpeople\tcheck\tJohn Wick\n\tpeople\tcheck\twork\n\tpeople\tdays\t96\n\n");
+    printf("ADD:\tDesired case and spelling is important.\nCHECK:\tcase-insensitive substring OK\n\te.g. 'jon' picks up 'Jonathan Smith' and 'JON from work'.\nFORGET:\tCase not important; correct spelling of the full name important.\nDAYS:\tUsed as a benchmark against the numbers of days since you last contacted people in your list.\n\tWhen it has been too long, you will get a ! WARNING\n\n");
+
+    exit(info);
 }
+
 
 void setTimespan(int input) {
     FILE *file = fopen(getTimefilePath(), "w");
@@ -47,8 +58,7 @@ int getTimespan(void){
     if (file == NULL)
     {
         // File does not exist, initialize variable to default value
-        printf("\nThe file 'timespan' appears to be missing from the data folder.\nCreating 'timespan' data file with default interval of 30 days.\nTo change, use: 'people time [number]\n");
-        fclose(file);
+        printf("\nThe file 'timespan' appears to be missing from the data folder.\nCreating 'timespan' data file with default interval of 30 days.\nTo change, use: 'people days [number]\n");
         timespanData = 30;
         file = fopen(getTimefilePath(), "w");
         fprintf(file, "%d", timespanData);
@@ -103,7 +113,7 @@ char* getLowercase(char* userInput)
 
 void rewriteDirectory(person* head) 
 {
-    // here you are basically rebuilding the yellowpages directory file from a linked list you have made an edit to e.g. updating the date of a Person
+    // here you are basically rebuilding the namefile from a linked list you have made an edit to e.g. updating the date of a Person
     FILE* file = fopen(getNamefilePath(), "w");
 
     person* current = head;
@@ -201,8 +211,7 @@ person* getLinkedListFromNamefile(void)
     FILE *file = fopen(getNamefilePath(), "r");
     if (file == NULL) {
         printf("\nYou don't have anyone saved to your People List!\nAdd someone using [./people add forename surname] and try again!\n\n");
-        fclose(file);
-        exit(1);
+        exit(0);
     }
     fclose(file);
 
@@ -223,8 +232,7 @@ person* getLinkedListFromNamefile(void)
 
     file = fopen(getNamefilePath(), "r");
     if (file == NULL) {
-        printf("Error: failed to open file\n");
-        fclose(file);
+        printf("Error: failed to open your People List file\n");
         exit(1);
     }
 
@@ -288,30 +296,43 @@ void sortLinkedListByName(person* head) {
     }
 }
 
+
 char* getNamefilePath(void) {
     if (namefile == NULL) {
         char* env = getenv("PEOPLE_NAMEFILE");
         if (env == NULL) {
             char* home = getenv("HOME");
-            namefile = malloc(sizeof(char) * (strlen(home) + 10)); // allocate enough size for home directory, plus 10 bytes for "/namefile\0".
-            strcpy(namefile, home);
-            strcat(namefile, "/namefile");
+            char* folder = "/people";
+            char* filename = "/namefile";
+            char* path = malloc(sizeof(char) * (strlen(home) + strlen(folder) + strlen(filename) + 1)); // allocate enough size for home directory, folder name, file name, and "\0"
+            strcpy(path, home);
+            strcat(path, folder);
+            mkdir(path, 0700); // create the "people" directory with RWE permissions for owner
+            strcat(path, filename); // append the file name to the path
+            namefile = path;
         } else {
           namefile = env;
         }
     }
-
+    
     return namefile;
 }
+
 
 char* getTimefilePath(void) {
     if (timefile == NULL) {
         char* env = getenv("PEOPLE_TIMEFILE");
         if (env == NULL) {
             char* home = getenv("HOME");
-            timefile = malloc(sizeof(char) * (strlen(home) + 10)); // allocate enough size for home directory, plus 10 bytes for "/timefile\0".
-            strcpy(timefile, home);
-            strcat(timefile, "/timefile");
+            char* folder = "/people";
+            char* filename = "/timefile";
+            char* path = malloc(sizeof(char) * (strlen(home) + strlen(folder) + strlen(filename) + 1));
+            strcpy(path, home);
+            // printf("\npath  :  %s\n", path); // for debugging
+            strcat(path, folder);
+            mkdir(path, 0700);
+            strcat(path, filename);
+            timefile = path;
         } else {
           timefile = env;
         }
