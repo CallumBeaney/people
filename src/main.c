@@ -9,6 +9,16 @@
 
 int main(int argc, char *argv[])
 {
+    
+/*
+    PRINT INFO: If no parameters is given, program should guide the user by printing out the instructions.
+*/
+    if (argc == 1)
+    {
+        errorMessage(1);
+    }
+/* 
+
 /* 
     DELETE DIRECTORY: people forget all 
 */    
