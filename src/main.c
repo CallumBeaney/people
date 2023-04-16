@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 {
     
 /*
-    PRINT INFO: If no parameters is given, program should guide the user by printing out the instructions.
+    PRINT INFO: If no parameters are given, program should guide the user by printing out the instructions.
 */
     if (argc == 1)
     {
