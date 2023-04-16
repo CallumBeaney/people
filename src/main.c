@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 /* 
     DELETE DIRECTORY: people forget all 
 */    
-    if (argc == 3 && strcmp(argv[1], "forget") == 0 && strcmp(argv[2], "all") == 0) 
+    else if (argc == 3 && strcmp(argv[1], "forget") == 0 && strcmp(argv[2], "all") == 0) 
     {
         int purge = remove(getNamefilePath());
         if(purge == 0) {
