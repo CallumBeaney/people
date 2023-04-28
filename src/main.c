@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 */    
     else if (argc == 3 && strcmp(argv[1], "forget") == 0 && strcmp(argv[2], "all") == 0) 
     {
-        printf("Are you sure you want to delete the entire people list? [y/n]: ");
+        printf("Do you want to delete entire people list? [y/n]:  ");
         char answer;
         scanf(" %c", &answer);
         if(answer == 'y' || answer == 'Y') {
