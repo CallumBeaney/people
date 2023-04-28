@@ -1,14 +1,15 @@
 # people
 
 **what is?**  ー This is a CLI tool for tracking the number of days since you have made contact with people.  
-**why a CLI?**  ー 99% of people don't know what a terminal is -- lightweight & discreet  
-    
+
 [usage](#usage)  
+[reviews](#reviews)  
 [installation script on linux](#installation-script-for-linux)  
 [manual installation](#manual-installation)  
 [creating an alias](#creating-an-alias)  
 [usage walkthrough](#walkthrough)  
 
+<br>
 
 ## usage
 ```
@@ -20,6 +21,15 @@
 ./people  days    [number]
 ./people  info
 ```
+
+## reviews  
+ - <i>"Clearly this is made for people with ADHD."</i>  
+ - <i>"I like it a lot. If nothing else its a great guilt trip maker. I am going to go call my parents now."</i>  
+ - <i>"Seriously. I immediately installed this."</i>  
+ - <i>"useful for people who have friends/family/whatever <sup>unlike me</sup></i>  
+ - <i>"Is there a cli tool for keeping track of how long it's been since you last used this cli tool?"</i>    
+
+<br>
 
 ## installation script for linux
 If you are using a linux distribution, you can simply run this command in the program's directory:
