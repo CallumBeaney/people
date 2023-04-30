@@ -23,13 +23,21 @@ int main(int argc, char *argv[])
 */    
     else if (argc == 3 && strcmp(argv[1], "forget") == 0 && strcmp(argv[2], "all") == 0) 
     {
-        int purge = remove(getNamefilePath());
-        if(purge == 0) {
-            printf("\nPeople List deleted successfully.\nA new one will be generated when you next use [./people add _____]\n\n");
-            return 0;
+        printf("Do you want to delete entire people list? [y/n]:  ");
+        char answer;
+        scanf(" %c", &answer);
+        if(answer == 'y' || answer == 'Y') {
+            int purge = remove(getNamefilePath());
+            if(purge == 0) {
+                printf("\nPeople List deleted successfully.\nA new one will be generated when you next use [./people add _____]\n\n");
+                return 0;
+            } else {
+                printf("\nError: unable to delete the file\n");
+                return 1;
+            }
         } else {
-            printf("\nError: unable to delete the file\n");
-            return 1;
+            printf("Operation cancelled.\n");
+            return 0;
         }
     }
 /* 
