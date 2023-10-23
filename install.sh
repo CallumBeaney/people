@@ -1,6 +1,6 @@
 #!/bin/bash
 
-gcc -o people src/main.c src/helpers.c
+gcc -o people src/main.c src/helpers.c src/mainFunctions.c  
 
 # Get the directory of the currently running script
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"

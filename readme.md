@@ -20,6 +20,7 @@
 ./people  forget  all
 ./people  days    [number]
 ./people  info
+./people  /* identical to 'check all' */
 ```
 
 ## reviews  
@@ -27,7 +28,7 @@
  - <i>"I like it a lot. If nothing else its a great guilt trip maker. I am going to go call my parents now."</i>  
  - <i>"Seriously. I immediately installed this."</i>  
  - <i>"useful for people who have friends/family/whatever <sup>unlike me</sup></i>  
- - <i>"Is there a cli tool for keeping track of how long it's been since you last used this cli tool?"</i>    
+ - <i>"Is there a cli tool for keeping track of how long it's been since you last used this cli tool?"</i> 
 
 <br>
 
@@ -44,17 +45,18 @@ Download this repo using the green `<>Code` button above, or via the terminal:
 ```
 git clone https://github.com/CallumBeaney/people  
 ```  
-The provided executable was compiled on an AArch64 processor. While the source code is compatible with Linux, macOS, Ubuntu, Solaris etc.   running it on other operating systems may result in a `bad CPU` error. To fix this, simply make the program with e.g. GCC make utility like so, and the source will be repackaged for your setup:  
+The provided executable was compiled on an AArch64 processor. While the source code is compatible with Linux, macOS, Ubuntu, Solaris etc.  running it on other operating systems may result in a `bad CPU` error. To fix this, simply make the program with e.g. GCC make utility like so from the root directory of this folder, and the source will be repackaged for your setup:  
 ```
-gcc -o people src/main.c src/helpers.c
+gcc -o people src/main.c src/helpers.c src/mainFunctions.c   
 ```
+You may have to give the produced executable the appropriate R/W permissions with e.g. `chmod +x path/to/people` for Unix in your terminal
   
   
 ## creating an alias
 N.B. If you have used `install.sh` this will be done for you.  
   
 For the sake of being able to quickly check without moving to the containing folder, you can create an alias and add it to your PATH.  
-If using a macOS, the process will look like this:  
+If using a macOS with a ZSH terminal, the process will look like this:  
 
 1. Open a terminal and type:
 ```

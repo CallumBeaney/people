@@ -1,8 +1,13 @@
 #ifndef HELPERS_H
 #define HELPERS_H
 
-#include "constants.h"
 #include <time.h> // timeof() requires time_t so must declare here also
+
+typedef struct node {
+    char name[50];
+    char date[12];
+    struct node *next;
+} person;
 
 // DATE & Time-related functions
 void setTimespan(int input);
@@ -15,7 +20,6 @@ time_t timeof(int mon, int day, int yr);
 // String handling
 char* concatArgumentVector(int argc, char*argv[]);
 char* getLowercase(char* name);
-void errorMessage(int info);
 
 // LinkedList & Database handling
 person* getLinkedListFromNamefile(void);

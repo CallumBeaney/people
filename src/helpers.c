@@ -1,6 +1,5 @@
 // FILES
 #include "helpers.h"
-#include "constants.h"
 
 // LIBRARIES
 #include <stdio.h>
@@ -10,35 +9,12 @@
 #include <ctype.h> // tolower(), isdigit()
 #include <sys/stat.h> // N.B. If seeking to make this src windows-compatible, this library uses mkdir() which may need adaptation
 
-
 // for getNamefilePath and getTimefilePath
 // caches results so we only ever allocate once and don't have to worry about freeing
 char* namefile = NULL;
 char* timefile = NULL;
 
 /* ___________ FUNCTIONS BEGIN ___________ */
-
-void errorMessage(int info) {
-
-    printf("\n┌─┐┌─┐┌─┐┌─┐┬  ┌─┐\n├─┘├┤ │ │├─┘│  ├┤ \n┴  └─┘└─┘┴  ┴─┘└─┘\n");
-
-    if(info == 0) {   
-        printf("\nThis program was made by Callum Beaney in 2023, distributed under an MIT License.");
-        printf("\nPeople was written in C because Callum got bored doing it in Python.");
-
-        // if the below method isn't supported by the user terminal the link will be displayed as plain text.
-        char* url = "https://github.com/CallumBeaney/people";
-        printf("\nTo read the source code or report an issue, click here: \033]8;%s\007%s\033]8;;\n\033[0m", url, url); 
-        // must have "\n\033[0m" including the newline after the hyperlink-mode code to "unset" said mode & avoid terminal display problems
-        printf("\n");
-    }
-
-    printf("\nSyntax:\tpeople\tadd\t[person's name]\n\tpeople\tcheck\t[person's name OR substring thereof]\n\tpeople\tcheck\tall\n\tpeople\tforget\t[person's name]\n\tpeople\tforget\tall\n\tpeople\tdays\t[number]\n\tpeople\tinfo\n\nE.g.\tpeople\tadd\tAmy from work\n\tpeople\tcheck\tJohn Wick\n\tpeople\tcheck\twork\n\tpeople\tdays\t96\n\n");
-    printf("ADD:\tDesired case and spelling is important.\nCHECK:\tcase-insensitive substring OK\n\te.g. 'jon' picks up 'Jonathan Smith' and 'JON from work'.\nFORGET:\tCase not important; correct spelling of the full name important.\nDAYS:\tUsed as a benchmark against the numbers of days since you last contacted people in your list.\n\tWhen it has been too long, you will get a ! WARNING\n\n");
-
-    exit(info);
-}
-
 
 void setTimespan(int input) {
     FILE *file = fopen(getTimefilePath(), "w");
