@@ -27,8 +27,9 @@
  - <i>"Clearly this is made for people with ADHD."</i>  
  - <i>"I like it a lot. If nothing else its a great guilt trip maker. I am going to go call my parents now."</i>  
  - <i>"Seriously. I immediately installed this."</i>  
+ - <i>"I hope your tool doesn't use a `time_t` type, since some people here might have to back further than the UNIX Epoch. :)"</i>
  - <i>"useful for people who have friends/family/whatever <sup>unlike me</sup></i>  
- - <i>"Is there a cli tool for keeping track of how long it's been since you last used this cli tool?"</i> 
+ - <i>"Is there a cli tool for keeping track of how long it's been since you last used this cli tool?"</i>
 
 <br>
 
